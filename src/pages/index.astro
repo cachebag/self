@@ -6,13 +6,34 @@ const projects = [
     name: "rlox",
     url: "https://github.com/cachebag/rlox",
     description: "Fully functional language interpreter built in Rust, inspired by Robert Nystrom's Crafting Interpreters.",
-    thumbnail: `${import.meta.env.BASE_URL}/mountain.png`
+    thumbnail: `${import.meta.env.BASE_URL}/mountain.png`,
+    icons: [`${import.meta.env.BASE_URL}/rs.svg`]
   },
   {
     name: "rust-line",
     url: "https://github.com/cachebag/rust-line",
     description: "HTTP server built from scratch in Rust.",
-    thumbnail: `${import.meta.env.BASE_URL}/http.jpg`
+    thumbnail: `${import.meta.env.BASE_URL}/http.jpg`,
+    icons: [`${import.meta.env.BASE_URL}/rs.svg`]
+  },
+  {
+    name: "ticked",
+    url: "https://github.com/cachebag/ticked",
+    description: "All in one productivity app for your terminal, built in Python.",
+    thumbnail: `${import.meta.env.BASE_URL}/ticked.png`,
+    icons: [`${import.meta.env.BASE_URL}/py.svg`]
+  },
+  {
+    name: "aws student hub",
+    url: "https://github.com/AWS-WSU/AWS-Student-Hub",
+    description: "Student hub built for the AWS Cloud Computing Club at Wayne State University.",
+    thumbnail: `${import.meta.env.BASE_URL}/aws.png`,
+    icons: [
+      `${import.meta.env.BASE_URL}/js.svg`,
+      `${import.meta.env.BASE_URL}/jsx.svg`,
+      `${import.meta.env.BASE_URL}/aws.svg`
+    ],
+    hoverIcon: `${import.meta.env.BASE_URL}/aws-light.svg`
   }
 ];
 
@@ -43,19 +64,22 @@ const experience = {
       role: "Software Engineer Co-Op",
       company: "Cummins Inc.",
       period: "Feb 2025 - Present",
-      description: "Traction and Controls, ePowertrain"
+      description: "Traction and Controls, ePowertrain",
+      logo: `${import.meta.env.BASE_URL}/cummins.png`
     },
     {
       role: "Data Engineer Co-Op",
       company: "Cummins Inc.",
       period: "June 2024 - Feb 2025",
-      description: "Quality and Manufacturing"
+      description: "Quality and Manufacturing",
+      logo: `${import.meta.env.BASE_URL}/cummins.png`
     },
     {
       role: "Software Engineer Intern",
       company: "Insurit Agency",
       period: "June 2024 - Sept. 2025",
-      description: "Backend and server/cloud infrastructure"
+      description: "Backend and server/cloud infrastructure",
+      logo: `${import.meta.env.BASE_URL}/insurit.png`
     }
   ]
 };

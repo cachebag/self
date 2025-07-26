@@ -248,6 +248,19 @@ const sections = [
       .project {
         text-decoration: none;
         color: var(--text);
+        border: var(--border);
+        padding: 2rem;
+        background: var(--card-bg);
+        display: block;
+        transition: all 0.2s ease;
+        transform: translateY(0);
+      }
+
+      .project:hover {
+        transform: translateY(-8px);
+        background: var(--text);
+        color: var(--bg);
+        box-shadow: 8px 8px 0 rgba(28, 28, 28, 0.1);
       }
 
       .project-image {
@@ -256,12 +269,19 @@ const sections = [
         object-fit: cover;
         border: var(--border);
         margin-bottom: 2rem;
+        transition: border-color 0.2s ease;
+      }
+
+      .project:hover .project-image {
+        border-color: var(--bg);
       }
 
       .project-title {
         font-size: 2rem;
         font-weight: bold;
         margin-bottom: 1rem;
+        text-transform: uppercase;
+        letter-spacing: -1px;
       }
 
       .project-desc {
@@ -269,25 +289,100 @@ const sections = [
         line-height: 1.6;
       }
 
+      .project-icons {
+        display: flex;
+        gap: 0.5rem;
+        margin-top: 1.5rem;
+        align-items: center;
+      }
+
+      .project-icon {
+        width: 24px;
+        height: 24px;
+        opacity: 0.7;
+        transition: opacity 0.2s ease;
+      }
+
+      .project:hover .project-icon {
+        opacity: 1;
+        filter: brightness(0) invert(1);
+      }
+
+      .aws-hover-icon {
+        display: none;
+      }
+
+      .project:hover .aws-hover-icon {
+        display: block;
+        filter: none;
+      }
+
+      .project:hover .aws-default-icon {
+        display: none;
+      }
+
+      .experience-grid {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 2rem;
+      }
+
       .experience-item {
-        margin-bottom: 4rem;
+        border: var(--border);
+        padding: 2rem;
+        background: var(--card-bg);
+        display: grid;
+        grid-template-columns: auto 1fr;
+        gap: 2rem;
+        align-items: center;
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+      }
+
+      .experience-item:hover {
+        transform: translateY(-4px);
+        box-shadow: 6px 6px 0 rgba(28, 28, 28, 0.1);
+      }
+
+      .experience-logo {
+        width: 80px;
+        height: 80px;
+        object-fit: contain;
+        border: var(--border);
+        padding: 1rem;
+        background: white;
+      }
+
+      .experience-content {
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
       }
 
       .experience-role {
         font-size: 1.5rem;
         font-weight: bold;
-        margin-bottom: 0.5rem;
+        text-transform: uppercase;
+        letter-spacing: -0.5px;
       }
 
       .experience-company {
         font-size: 1.25rem;
-        margin-bottom: 0.5rem;
+        color: var(--accent);
+        font-weight: 500;
       }
 
       .experience-period {
         font-size: 1rem;
-        color: #666;
-        margin-bottom: 1rem;
+        font-weight: bold;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        opacity: 0.7;
+      }
+
+      .experience-description {
+        font-size: 1.1rem;
+        margin-top: 0.5rem;
+        line-height: 1.4;
       }
 
       .writing-grid {
@@ -431,6 +526,18 @@ const sections = [
           grid-template-columns: 1fr;
         }
 
+        .experience-item {
+          grid-template-columns: 1fr;
+          text-align: center;
+          gap: 1rem;
+        }
+
+        .experience-logo {
+          width: 60px;
+          height: 60px;
+          justify-self: center;
+        }
+
         .resume-widget {
           position: static;
           margin-top: 2rem;
@@ -496,6 +603,21 @@ const sections = [
                 {project.thumbnail && <img src={project.thumbnail} alt={project.name} class="project-image" />}
                 <h3 class="project-title">{project.name}</h3>
                 <p class="project-desc">{project.description}</p>
+                {project.icons && (
+                  <div class="project-icons">
+                    {project.icons.map(icon => {
+                      if (project.hoverIcon && icon.includes('aws.svg')) {
+                        return (
+                          <>
+                            <img src={icon} alt="tech icon" class="project-icon aws-default-icon" />
+                            <img src={project.hoverIcon} alt="tech icon" class="project-icon aws-hover-icon" />
+                          </>
+                        );
+                      }
+                      return <img src={icon} alt="tech icon" class="project-icon" />;
+                    })}
+                  </div>
+                )}
               </a>
             ))}
           </div>
@@ -506,13 +628,16 @@ const sections = [
         <div class="section-content">
           <h2 class="section-title">Experience</h2>
           <div class="experience-section">
-            <div class="experience-list">
+            <div class="experience-grid">
               {experience.items.map(item => (
                 <div class="experience-item">
-                  <div class="experience-role">{item.role}</div>
-                  <div class="experience-company">{item.company}</div>
-                  <div class="experience-period">{item.period}</div>
-                  <p>{item.description}</p>
+                  <img src={item.logo} alt={`${item.company} logo`} class="experience-logo" />
+                  <div class="experience-content">
+                    <div class="experience-role">{item.role}</div>
+                    <div class="experience-company">{item.company}</div>
+                    <div class="experience-period">{item.period}</div>
+                    <div class="experience-description">{item.description}</div>
+                  </div>
                 </div>
               ))}
             </div>
