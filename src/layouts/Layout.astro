@@ -42,6 +42,7 @@ const sections = [
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>{title}</title>
     <meta name="description" content={description} />
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; frame-src 'self';" />
     <style>
       :root {
         --bg: #FFF8F0;
@@ -540,7 +541,7 @@ const sections = [
     </div>
 
     <div class="modal-overlay" id="modalOverlay">
-      <iframe class="resume-preview" src="/akrm-resume.pdf"></iframe>
+      <iframe class="resume-preview" src={`${import.meta.env.BASE_URL}/akrm-resume.pdf`}></iframe>
     </div>
 
     <script>
