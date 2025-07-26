@@ -1,0 +1,600 @@
+---
+const defaultHero = {
+  heading: "Akrm Al-Hakimi.",
+  subheading: "Software Engineer @ Cummins Inc.",
+  subitems: ["Graduating December 2026"],
+  cta: "Email me",
+  ctaLink: "mailto:you@example.com"
+};
+
+const { 
+  title = "self", 
+  description = "Projects", 
+  projects = [], 
+  hero = defaultHero,
+  about = {
+    title: "Description",
+    content: "I build high-performance distributed systems and low-level software.",
+    highlights: []
+  },
+  experience = {
+    title: "Experience",
+    items: []
+  },
+  writing = {
+    title: "Writing",
+    posts: []
+  }
+} = Astro.props;
+
+const sections = [
+  { id: "hero", label: "Home" },
+  { id: "description", label: "Description" },
+  { id: "projects", label: "Projects" },
+  { id: "experience", label: "Experience" },
+  { id: "writing", label: "Writing" }
+];
+---
+
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <style>
+      :root {
+        --bg: #FFF8F0;
+        --text: #1C1C1C;
+        --accent: #E26D5C;
+        --card-bg: #FFFFFF;
+        --font: "Helvetica Neue", Arial, sans-serif;
+        --border: 2px solid var(--text);
+        --section-spacing: 6rem;
+        --nav-width: 180px;
+      }
+
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      html {
+        scroll-behavior: smooth;
+      }
+
+      body {
+        background: var(--bg);
+        color: var(--text);
+        font-family: var(--font);
+        min-height: 100vh;
+        line-height: 1.6;
+        padding-right: var(--nav-width);
+        max-width: 1800px;
+        margin: 0 auto;
+      }
+
+      .content-wrapper {
+        max-width: 1400px;
+        margin: 0 auto;
+        padding: 0 4rem;
+        transform: translateX(-5%);
+      }
+
+      .nav {
+        position: fixed;
+        right: 0;
+        top: 0;
+        bottom: 0;
+        width: var(--nav-width);
+        border-left: var(--border);
+        padding: 2rem;
+        display: flex;
+        flex-direction: column;
+        gap: 1.5rem;
+        background: var(--bg);
+      }
+
+      .nav-title {
+        font-size: 1.2rem;
+        font-weight: bold;
+        text-transform: uppercase;
+        margin-bottom: 1rem;
+        letter-spacing: -0.5px;
+      }
+
+      .nav-link {
+        color: var(--text);
+        text-decoration: none;
+        font-size: 1rem;
+        padding: 0.5rem 0;
+        transition: color 0.2s;
+        position: relative;
+      }
+
+      .nav-link::after {
+        content: '';
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width: 0;
+        height: 2px;
+        background: var(--text);
+        transition: width 0.3s ease;
+      }
+
+      .nav-link:hover::after {
+        width: 30%;
+      }
+
+      .nav-link.active::after {
+        width: 100%;
+      }
+
+      .nav-link:hover {
+        color: var(--text);
+      }
+
+      .nav-link.active {
+        color: var(--text);
+        font-weight: 500;
+      }
+
+      header {
+        padding: 2rem 4rem;
+        border-bottom: var(--border);
+        text-transform: uppercase;
+        font-size: 2rem;
+        font-weight: 900;
+        letter-spacing: -1px;
+        transform: translateX(-5%);
+      }
+
+      .hero {
+        min-height: 70vh;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        text-align: center;
+        padding: 3rem;
+        border-bottom: var(--border);
+        transform: translateX(-7%);
+      }
+
+      .hero h1 {
+        font-size: 4.5rem;
+        font-weight: 900;
+        letter-spacing: -3px;
+        text-transform: uppercase;
+        margin-bottom: 1.5rem;
+      }
+
+      .hero p {
+        font-size: 1.5rem;
+        max-width: 800px;
+        margin-bottom: 2rem;
+      }
+
+      .hero a {
+        padding: 1rem 2rem;
+        border: var(--border);
+        font-weight: bold;
+        text-decoration: none;
+        color: var(--text);
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        transition: all 0.2s;
+      }
+
+      .hero a:hover {
+        background: var(--text);
+        color: var(--bg);
+      }
+
+      .section {
+        padding: 8rem 4rem;
+        border-bottom: var(--border);
+      }
+
+      .section-content {
+        max-width: 1400px;
+        margin: 0 auto;
+        transform: translateX(-7%);
+      }
+
+      .section-title {
+        font-size: 2.5rem;
+        font-weight: 900;
+        letter-spacing: -1px;
+        text-transform: uppercase;
+        margin-bottom: 3rem;
+      }
+
+      .about-content {
+        display: grid;
+        grid-template-columns: 2fr 1fr;
+        gap: 4rem;
+        align-items: start;
+      }
+
+      .about-text {
+        font-size: 1.5rem;
+        line-height: 1.6;
+      }
+
+      .highlights {
+        list-style: none;
+        font-size: 1.25rem;
+      }
+
+      .highlights li {
+        padding: 1rem 0;
+        border-bottom: 1px solid var(--text);
+      }
+
+      .highlights li:last-child {
+        border-bottom: none;
+      }
+
+      .projects-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 4rem;
+      }
+
+      .project {
+        text-decoration: none;
+        color: var(--text);
+      }
+
+      .project-image {
+        width: 100%;
+        aspect-ratio: 16/9;
+        object-fit: cover;
+        border: var(--border);
+        margin-bottom: 2rem;
+      }
+
+      .project-title {
+        font-size: 2rem;
+        font-weight: bold;
+        margin-bottom: 1rem;
+      }
+
+      .project-desc {
+        font-size: 1.1rem;
+        line-height: 1.6;
+      }
+
+      .experience-item {
+        margin-bottom: 4rem;
+      }
+
+      .experience-role {
+        font-size: 1.5rem;
+        font-weight: bold;
+        margin-bottom: 0.5rem;
+      }
+
+      .experience-company {
+        font-size: 1.25rem;
+        margin-bottom: 0.5rem;
+      }
+
+      .experience-period {
+        font-size: 1rem;
+        color: #666;
+        margin-bottom: 1rem;
+      }
+
+      .writing-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 2rem;
+      }
+
+      .post {
+        padding: 2rem;
+        border: var(--border);
+        text-decoration: none;
+        color: var(--text);
+      }
+
+      .post-title {
+        font-size: 1.5rem;
+        font-weight: bold;
+        margin-bottom: 1rem;
+      }
+
+      .experience-section {
+        display: grid;
+        grid-template-columns: 1fr auto;
+        gap: 4rem;
+        align-items: start;
+      }
+
+      .resume-widget {
+        position: sticky;
+        top: 2rem;
+        border: var(--border);
+        padding: 2rem;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 1rem;
+        cursor: pointer;
+        transition: transform 0.2s;
+        background: var(--bg);
+      }
+
+      .resume-widget:hover {
+        transform: translateY(-4px);
+      }
+
+      .resume-icon {
+        width: 40px;
+        height: 40px;
+        border: var(--border);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: bold;
+        font-size: 1.2rem;
+      }
+
+      .resume-label {
+        font-size: 0.9rem;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+      }
+
+      .modal-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(255, 248, 240, 0.25);
+        backdrop-filter: blur(8px);
+        display: none;
+        justify-content: center;
+        align-items: center;
+        z-index: 1000;
+      }
+
+      .modal-overlay.active {
+        display: flex;
+      }
+
+      .resume-preview {
+        width: 70%;
+        height: 80vh;
+        border: var(--border);
+        background: white;
+        box-shadow: 0 4px 24px rgba(0, 0, 0, 0.1);
+      }
+
+      footer {
+        padding: 2rem;
+        text-align: center;
+        font-size: 0.9rem;
+      }
+
+      @media (max-width: 1024px) {
+        body {
+          padding-right: 0;
+        }
+
+        .content-wrapper {
+          padding: 0 2rem;
+          transform: none;
+        }
+
+        header {
+          padding: 2rem;
+          transform: none;
+        }
+
+        .hero {
+          padding: 4rem 2rem;
+          transform: none;
+        }
+
+        .section {
+          padding: 4rem 2rem;
+        }
+
+        .section-content {
+          transform: none;
+        }
+
+        .nav {
+          display: none;
+        }
+
+        .hero h1 {
+          font-size: 3.5rem;
+        }
+
+        .about-content {
+          grid-template-columns: 1fr;
+        }
+
+        .projects-grid {
+          grid-template-columns: 1fr;
+        }
+
+        .experience-section {
+          grid-template-columns: 1fr;
+        }
+
+        .resume-widget {
+          position: static;
+          margin-top: 2rem;
+        }
+
+        .resume-preview {
+          width: 90%;
+          height: 90vh;
+        }
+      }
+
+      .hero-subitems {
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+        margin-bottom: 3rem;
+      }
+
+      .hero-subitem {
+        font-size: 1.2rem;
+        opacity: 0.8;
+      }
+    </style>
+  </head>
+  <body>
+    <nav class="nav">
+      <div class="nav-title">Navigate</div>
+      {sections.map(section => (
+        <a href={`#${section.id}`} class="nav-link">{section.label}</a>
+      ))}
+    </nav>
+
+    <div class="content-wrapper">
+      <header>{title}</header>
+      
+      <section id="hero" class="hero">
+        <h1>{hero.heading}</h1>
+        <p>{hero.subheading}</p>
+        <p style="font-size: 1.2rem; margin-bottom: 3rem; opacity: 0.8;">Graduating December 2026</p>
+        <a href={hero.ctaLink}>{hero.cta}</a>
+      </section>
+
+      <section id="description" class="section">
+        <div class="section-content">
+          <h2 class="section-title">Description</h2>
+          <div class="about-content">
+            <p class="about-text">{about.content}</p>
+            <ul class="highlights">
+              {about.highlights.map(item => (
+                <li>{item}</li>
+              ))}
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <section id="projects" class="section">
+        <div class="section-content">
+          <h2 class="section-title">Projects</h2>
+          <div class="projects-grid">
+            {projects.map(project => (
+              <a href={project.url} class="project" target="_blank">
+                {project.thumbnail && <img src={project.thumbnail} alt={project.name} class="project-image" />}
+                <h3 class="project-title">{project.name}</h3>
+                <p class="project-desc">{project.description}</p>
+              </a>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <section id="experience" class="section">
+        <div class="section-content">
+          <h2 class="section-title">Experience</h2>
+          <div class="experience-section">
+            <div class="experience-list">
+              {experience.items.map(item => (
+                <div class="experience-item">
+                  <div class="experience-role">{item.role}</div>
+                  <div class="experience-company">{item.company}</div>
+                  <div class="experience-period">{item.period}</div>
+                  <p>{item.description}</p>
+                </div>
+              ))}
+            </div>
+            <div class="resume-widget" id="resumeWidget">
+              <div class="resume-icon">CV</div>
+              <div class="resume-label">View Resume</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="writing" class="section">
+        <div class="section-content">
+          <h2 class="section-title">Writing</h2>
+          <div class="writing-grid">
+            <div class="post" style="text-align: center; grid-column: 1/-1;">
+              <h3 class="post-title">Nothing to see here yet</h3>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <footer>
+        <p>© {new Date().getFullYear()}</p>
+      </footer>
+    </div>
+
+    <div class="modal-overlay" id="modalOverlay">
+      <iframe class="resume-preview" src="/src/assets/akrm-resume.pdf"></iframe>
+    </div>
+
+    <script>
+      const resumeWidget = document.getElementById('resumeWidget');
+      const modalOverlay = document.getElementById('modalOverlay');
+
+      resumeWidget.addEventListener('click', () => {
+        modalOverlay.classList.add('active');
+        document.body.style.overflow = 'hidden';
+      });
+
+      modalOverlay.addEventListener('click', (e) => {
+        if (e.target === modalOverlay) {
+          modalOverlay.classList.remove('active');
+          document.body.style.overflow = '';
+        }
+      });
+
+      // Close on escape key
+      document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && modalOverlay.classList.contains('active')) {
+          modalOverlay.classList.remove('active');
+          document.body.style.overflow = '';
+        }
+      });
+    </script>
+  </body>
+</html>
+
+<script>
+  const sections = document.querySelectorAll('section[id]');
+  const navLinks = document.querySelectorAll('.nav-link');
+
+  function setActiveLink() {
+    const scrollPosition = window.scrollY;
+
+    sections.forEach(section => {
+      const sectionTop = section.offsetTop;
+      const sectionHeight = section.offsetHeight;
+      const sectionId = section.getAttribute('id');
+      
+      if (scrollPosition >= sectionTop - 100 && 
+          scrollPosition < sectionTop + sectionHeight - 100) {
+        navLinks.forEach(link => {
+          link.classList.remove('active');
+          if (link.getAttribute('href') === `#${sectionId}`) {
+            link.classList.add('active');
+          }
+        });
+      }
+    });
+  }
+
+  window.addEventListener('scroll', setActiveLink);
+  setActiveLink(); // Set initial state
+</script>
+

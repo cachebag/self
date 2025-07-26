@@ -1,0 +1,88 @@
+---
+import Layout from "../layouts/Layout.astro";
+
+const projects = [
+  {
+    name: "rlox",
+    url: "https://github.com/cachebag/rlox",
+    description: "Fully functional language interpreter built in Rust, inspired by Robert Nystrom's Crafting Interpreters.",
+    thumbnail: "/src/assets/mountain.png"
+  },
+  {
+    name: "rust-line",
+    url: "https://github.com/cachebag/rust-line",
+    description: "HTTP server built from scratch in Rust.",
+    thumbnail: "/src/assets/http.jpg"
+  }
+];
+
+const hero = {
+  heading: "Akrm Al-Hakimi.",
+  subheading: "Software Engineer @ Cummins Inc.",
+  subitem: "Graduating December 2026",
+  cta: "Email me",
+  ctaLink: "mailto:alhakimiakrmj@gmail.com"
+};
+
+const about = {
+  title: "Description",
+  content: "Passionate about distributed systems and systems-level programming. Computer Science major for the College of Engineering at Wayne State University. President of AWS Cloud Computing Club. Software Engineer Co-Op at Cummins Inc. working for the Traction and Controls - ePowertrain team at Accelera.",
+  highlights: [
+    "Distributed Systems Architecture",
+    "Systems Programming in C, Rust and C++",
+    "Performance Optimization",
+    "Low-level Development", 
+    "Network Programming"
+  ]
+};
+
+const experience = {
+  title: "Experience",
+  items: [
+    {
+      role: "Software Engineer Co-Op",
+      company: "Cummins Inc.",
+      period: "Feb 2025 - Present",
+      description: "Traction and Controls, ePowertrain"
+    },
+    {
+      role: "Data Engineer Co-Op",
+      company: "Cummins Inc.",
+      period: "June 2024 - Feb 2025",
+      description: "Quality and Manufacturing"
+    },
+    {
+      role: "Software Enginer Intern",
+      company: "Insurit Agency",
+      period: "June 2024 - Sept. 2025",
+      description: "Backend and server/cloud infrastructure"
+    }
+  ]
+};
+
+const writing = {
+  title: "Writing",
+  posts: [
+    {
+      title: "Building a Language Interpreter in Rust",
+      description: "A deep dive into creating an efficient language interpreter using Rust, exploring parsing techniques and optimization strategies.",
+      link: "#"
+    },
+    {
+      title: "Performance Optimization in Distributed Systems",
+      description: "Exploring techniques for maximizing performance in distributed computing environments.",
+      link: "#"
+    }
+  ]
+};
+---
+
+<Layout 
+  title="self" 
+  projects={projects} 
+  hero={hero} 
+  about={about}
+  experience={experience}
+  writing={writing}
+/>
+
