@@ -75,7 +75,6 @@ const sections = [
         max-width: 1400px;
         margin: 0 auto;
         padding: 0 4rem;
-        transform: translateX(-5%);
       }
 
       .nav {
@@ -144,7 +143,6 @@ const sections = [
         font-size: 2rem;
         font-weight: 900;
         letter-spacing: -1px;
-        transform: translateX(-5%);
       }
 
       .hero {
@@ -156,7 +154,6 @@ const sections = [
         text-align: center;
         padding: 3rem;
         border-bottom: var(--border);
-        transform: translateX(-7%);
       }
 
       .hero h1 {
@@ -197,7 +194,6 @@ const sections = [
       .section-content {
         max-width: 1400px;
         margin: 0 auto;
-        transform: translateX(-7%);
       }
 
       .section-title {
@@ -228,6 +224,7 @@ const sections = [
       .highlights li {
         padding: 1rem 0;
         border-bottom: 1px solid var(--text);
+        white-space: nowrap;
       }
 
       .highlights li:last-child {
@@ -364,6 +361,19 @@ const sections = [
         font-size: 1.25rem;
         color: var(--accent);
         font-weight: 500;
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+      }
+
+      .experience-label {
+        font-size: 0.75rem;
+        padding: 0.25rem 0.5rem;
+        background: var(--text);
+        color: var(--bg);
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        font-weight: 600;
       }
 
       .experience-period {
@@ -629,7 +639,10 @@ const sections = [
                   <img src={item.logo} alt={`${item.company} logo`} class="experience-logo" />
                   <div class="experience-content">
                     <div class="experience-role">{item.role}</div>
-                    <div class="experience-company">{item.company}</div>
+                    <div class="experience-company">
+                      {item.company}
+                      {item.label && <span class="experience-label">{item.label}</span>}
+                    </div>
                     <div class="experience-period">{item.period}</div>
                     <div class="experience-description">{item.description}</div>
                   </div>
