@@ -1,0 +1,333 @@
+---
+import Layout from "../layouts/Layout.astro";
+
+const experience = [
+  {
+    role: "Software Engineer Co-Op",
+    company: "Cummins Inc.",
+    period: "Feb 2025 - Present",
+    description: "Traction and Controls, ePowertrain",
+    logo: `${import.meta.env.BASE_URL}/cummins.png`
+  },
+  {
+    role: "Software Engineer",
+    company: "SnorkelAI",
+    period: "Oct 2025 - Present",
+    label: "Contract",
+    description: "DevOps infra, CI/CD and model evaluation",
+    logo: `${import.meta.env.BASE_URL}/snorkel.svg`
+  },
+  {
+    role: "Data Engineer Co-Op",
+    company: "Cummins Inc.",
+    period: "June 2024 - Feb 2025",
+    description: "Quality and Manufacturing",
+    logo: `${import.meta.env.BASE_URL}/cummins.png`
+  }
+];
+
+const interests = [
+  "Distributed Systems",
+  "Systems Programming in Rust and C++",
+  "Performance Optimization",
+  "Multi-threaded Programming",
+  "Networking"
+];
+---
+
+<Layout title="About | Akrm Al-Hakimi">
+  <h1 class="page-title">About</h1>
+  <p class="page-subtitle">Software Engineer @ Cummins Inc. • Graduating December 2026</p>
+
+  <section class="section">
+    <h2 class="section-title">Hello, there!</h2>
+    <div class="about-content">
+      <p>
+        Passionate about distributed systems and systems programming. Computer Science major at the 
+        College of Engineering, Wayne State University. President of AWS Cloud Computing Club.<br />
+        Currently working as a Software Engineer Co-Op at Cummins Inc. on the Traction and Controls 
+        - ePowertrain team at Accelera.
+      </p>
+        Open source/free software advocate. I'm currently an active contributor to:
+      <ul class="about-list">
+        <li>
+          <strong>
+            <a href="https://github.com/rust-lang/rustup" target="_blank" rel="noopener noreferrer">
+              rustup
+            </a>
+          </strong>: rustlang toolchain installer
+        </li>
+        <li>
+          <strong>
+            <a href="https://github.com/z-galaxy/zbus" target="_blank" rel="noopener noreferrer">
+              zbus
+            </a>
+          </strong>: A Rust API for D-Bus communication
+        </li>
+        <li>
+          <strong>
+            <a href="https://github.com/cachebag/nmrs" target="_blank" rel="noopener noreferrer">
+              nmrs
+            </a>
+          </strong>: Rust bindings for NetworkManager
+        </li>
+      </ul>
+    </div>
+  </section>
+
+  <section class="section">
+    <h2 class="section-title">Experience</h2>
+    <div class="experience-list">
+      {experience.map(item => (
+        <div class="experience-card card">
+          <img src={item.logo} alt={`${item.company} logo`} class="experience-logo" />
+          <div class="experience-content">
+            <div class="experience-header">
+              <h3 class="experience-role">{item.role}</h3>
+              {item.label && <span class="experience-label">{item.label}</span>}
+            </div>
+            <div class="experience-company">{item.company}</div>
+            <div class="experience-period">{item.period}</div>
+            <p class="experience-description">{item.description}</p>
+          </div>
+        </div>
+      ))}
+    </div>
+  </section>
+
+  <section class="section">
+    <h2 class="section-title">Resume</h2>
+    <div class="resume-section">
+      <a href={`${import.meta.env.BASE_URL}/akrm-resume.pdf`} target="_blank" class="resume-link card">
+        <div class="resume-icon">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+            <polyline points="14,2 14,8 20,8"></polyline>
+            <line x1="16" y1="13" x2="8" y2="13"></line>
+            <line x1="16" y1="17" x2="8" y2="17"></line>
+            <polyline points="10,9 9,9 8,9"></polyline>
+          </svg>
+        </div>
+        <div class="resume-info">
+          <span class="resume-title">View Resume</span>
+          <span class="resume-subtitle">PDF • Opens in new tab</span>
+        </div>
+        <span class="resume-arrow">→</span>
+      </a>
+    </div>
+  </section>
+
+  <section class="section">
+    <h2 class="section-title">Contact</h2>
+    <div class="contact-section">
+      <a href="mailto:alhakimiakrmj@gmail.com" class="contact-link">
+        <span class="contact-icon">✉</span>
+        alhakimiakrmj@gmail.com
+      </a>
+    </div>
+  </section>
+</Layout>
+
+<style>
+  .about-content {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .about-content p {
+    font-size: 1.05rem;
+    color: var(--text);
+    line-height: 1.8;
+  }
+
+  .interests-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 0.75rem;
+  }
+
+  .interest-item {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.75rem 1rem;
+    background: var(--bg-elevated);
+    border-radius: 8px;
+    font-size: 0.95rem;
+    color: var(--text);
+  }
+
+  .interest-dot {
+    color: var(--accent);
+    font-size: 0.6rem;
+  }
+
+  .experience-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .experience-card {
+    display: flex;
+    gap: 1.5rem;
+    align-items: flex-start;
+  }
+
+  .experience-logo {
+    width: 56px;
+    height: 56px;
+    object-fit: contain;
+    background: var(--bg-surface);
+    border-radius: 8px;
+    padding: 0.5rem;
+    flex-shrink: 0;
+  }
+
+  .experience-content {
+    flex: 1;
+  }
+
+  .experience-header {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-bottom: 0.25rem;
+  }
+
+  .experience-role {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: var(--text-bright);
+  }
+
+  .experience-label {
+    font-size: 0.7rem;
+    font-family: var(--font-mono);
+    padding: 0.2rem 0.5rem;
+    background: var(--accent);
+    color: var(--bg);
+    border-radius: 4px;
+    text-transform: uppercase;
+    font-weight: 600;
+  }
+
+  .experience-company {
+    font-size: 0.95rem;
+    color: var(--accent);
+    font-weight: 500;
+    margin-bottom: 0.25rem;
+  }
+
+  .experience-period {
+    font-size: 0.8rem;
+    font-family: var(--font-mono);
+    color: var(--text-muted);
+    margin-bottom: 0.5rem;
+  }
+
+  .experience-description {
+    font-size: 0.9rem;
+    color: var(--text);
+  }
+
+  .resume-section {
+    max-width: 400px;
+  }
+
+  .resume-link {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    text-decoration: none;
+    color: inherit;
+  }
+
+  .resume-link:hover {
+    color: inherit;
+  }
+
+  .resume-icon {
+    width: 48px;
+    height: 48px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--bg-surface);
+    border-radius: 8px;
+    color: var(--accent);
+  }
+
+  .resume-info {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+  }
+
+  .resume-title {
+    font-weight: 600;
+    color: var(--text-bright);
+  }
+
+  .resume-subtitle {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+  }
+
+  .resume-arrow {
+    font-size: 1.25rem;
+    color: var(--text-muted);
+    transition: transform 0.2s ease, color 0.2s ease;
+  }
+
+  .resume-link:hover .resume-arrow {
+    transform: translateX(4px);
+    color: var(--accent);
+  }
+
+  .contact-section {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+  }
+
+  .contact-link {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.75rem 1.25rem;
+    background: var(--bg-elevated);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    font-size: 0.95rem;
+    transition: all 0.2s ease;
+    color: var(--text-bright);
+  }
+
+  .contact-link:hover {
+    border-color: var(--accent);
+    background: var(--bg-surface);
+    color: var(--text-bright);
+  }
+
+  .contact-icon {
+    font-size: 1rem;
+  }
+
+  a:visited {
+    color: inherit;
+  }
+
+  @media (max-width: 600px) {
+    .experience-card {
+      flex-direction: column;
+      gap: 1rem;
+    }
+
+    .experience-header {
+      flex-wrap: wrap;
+    }
+  }
+</style>
+

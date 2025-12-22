@@ -1,34 +1,20 @@
 ---
-const defaultHero = {
-  heading: "Akrm Al-Hakimi.",
-  subheading: "Software Engineer @ Cummins Inc.",
-  subitems: ["Graduating December 2026"],
-  cta: "Email me",
-  ctaLink: "mailto:you@example.com"
-};
+export interface Props {
+  title: string;
+  description?: string;
+}
 
-const { 
-  title = "self", 
-  description = "Projects", 
-  projects = [], 
-  hero = defaultHero,
-  about = {
-    title: "Description",
-    content: "I build high-performance distributed systems and low-level software.",
-    highlights: []
-  },
-  experience = {
-    title: "Experience",
-    items: []
-  }
-} = Astro.props;
+const { title, description = "Personal site" } = Astro.props;
 
-const sections = [
-  { id: "hero", label: "Home" },
-  { id: "description", label: "Description" },
-  { id: "projects", label: "Projects" },
-  { id: "experience", label: "Experience" }
+const base = import.meta.env.BASE_URL;
+
+const navItems = [
+  { href: `${base}`, label: "Blog", icon: `${base}blog.svg` },
+  { href: `${base}about/`, label: "About", icon: `${base}repo.svg` },
+  { href: `${base}projects/`, label: "Work", icon: `${base}work.svg` }
 ];
+
+const currentPath = Astro.url.pathname;
 ---
 
 <html lang="en">
@@ -37,17 +23,52 @@ const sections = [
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>{title}</title>
     <meta name="description" content={description} />
-    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; frame-src 'self';" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
       :root {
-        --bg: #FFF8F0;
-        --text: #1C1C1C;
-        --accent: #E26D5C;
-        --card-bg: #FFFFFF;
-        --font: "Helvetica Neue", Arial, sans-serif;
-        --border: 2px solid var(--text);
-        --section-spacing: 6rem;
-        --nav-width: 180px;
+        /* Nord Polar Night */
+        --nord0: #2E3440;
+        --nord1: #3B4252;
+        --nord2: #434C5E;
+        --nord3: #4C566A;
+        
+        /* Nord Snow Storm */
+        --nord4: #D8DEE9;
+        --nord5: #E5E9F0;
+        --nord6: #ECEFF4;
+        
+        /* Nord Frost */
+        --nord7: #8FBCBB;
+        --nord8: #88C0D0;
+        --nord9: #81A1C1;
+        --nord10: #5E81AC;
+        
+        /* Nord Aurora */
+        --nord11: #BF616A;
+        --nord12: #D08770;
+        --nord13: #EBCB8B;
+        --nord14: #A3BE8C;
+        --nord15: #B48EAD;
+
+        /* Theme mappings */
+        --bg: var(--nord0);
+        --bg-elevated: var(--nord1);
+        --bg-surface: var(--nord2);
+        --text: var(--nord4);
+        --text-muted: var(--nord3);
+        --text-bright: var(--nord6);
+        --accent: var(--nord8);
+        --accent-secondary: var(--nord9);
+        --border: var(--nord3);
+        
+        --font-display: 'Outfit', system-ui, sans-serif;
+        --font-mono: 'Fira Code', 'JetBrains Mono', monospace;
+        
+        --sidebar-width: 220px;
+        --content-max: 900px;
       }
 
       * {
@@ -63,661 +84,341 @@ const sections = [
       body {
         background: var(--bg);
         color: var(--text);
-        font-family: var(--font);
+        font-family: var(--font-display);
         min-height: 100vh;
-        line-height: 1.6;
-        padding-right: var(--nav-width);
-        max-width: 1800px;
-        margin: 0 auto;
+        line-height: 1.7;
+        display: flex;
       }
 
-      .content-wrapper {
-        max-width: 1400px;
-        margin: 0 auto;
-        padding: 0 4rem;
-      }
-
-      .nav {
+      /* Sidebar */
+      .sidebar {
         position: fixed;
-        right: 0;
+        left: 0;
         top: 0;
         bottom: 0;
-        width: var(--nav-width);
-        border-left: var(--border);
-        padding: 2rem;
+        width: var(--sidebar-width);
+        background: var(--bg-elevated);
+        border-right: 1px solid var(--border);
+        padding: 2rem 1.5rem;
         display: flex;
         flex-direction: column;
-        gap: 1.5rem;
-        background: var(--bg);
+        z-index: 100;
       }
 
-      .nav-title {
-        font-size: 1.2rem;
-        font-weight: bold;
-        text-transform: uppercase;
-        margin-bottom: 1rem;
-        letter-spacing: -0.5px;
-      }
-
-      .nav-link {
-        color: var(--text);
-        text-decoration: none;
-        font-size: 1rem;
-        padding: 0.5rem 0;
-        transition: color 0.2s;
-        position: relative;
-      }
-
-      .nav-link::after {
-        content: '';
-        position: absolute;
-        bottom: 0;
-        left: 0;
-        width: 0;
-        height: 2px;
-        background: var(--text);
-        transition: width 0.3s ease;
-      }
-
-      .nav-link:hover::after {
-        width: 30%;
-      }
-
-      .nav-link.active::after {
-        width: 100%;
-      }
-
-      .nav-link:hover {
-        color: var(--text);
-      }
-
-      .nav-link.active {
-        color: var(--text);
-        font-weight: 500;
-      }
-
-      header {
-        padding: 2rem 4rem;
-        border-bottom: var(--border);
-        text-transform: uppercase;
-        font-size: 2rem;
-        font-weight: 900;
-        letter-spacing: -1px;
-      }
-
-      .hero {
-        min-height: 70vh;
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-        align-items: center;
-        text-align: center;
-        padding: 3rem;
-        border-bottom: var(--border);
-      }
-
-      .hero h1 {
-        font-size: 4.5rem;
-        font-weight: 900;
-        letter-spacing: -3px;
-        text-transform: uppercase;
-        margin-bottom: 1.5rem;
-      }
-
-      .hero p {
-        font-size: 1.5rem;
-        max-width: 800px;
-        margin-bottom: 2rem;
-      }
-
-      .hero a {
-        padding: 1rem 2rem;
-        border: var(--border);
-        font-weight: bold;
-        text-decoration: none;
-        color: var(--text);
-        text-transform: uppercase;
-        letter-spacing: 1px;
-        transition: all 0.2s;
-      }
-
-      .hero a:hover {
-        background: var(--text);
-        color: var(--bg);
-      }
-
-      .section {
-        padding: 8rem 4rem;
-        border-bottom: var(--border);
-      }
-
-      .section-content {
-        max-width: 1400px;
-        margin: 0 auto;
-      }
-
-      .section-title {
-        font-size: 2.5rem;
-        font-weight: 900;
-        letter-spacing: -1px;
-        text-transform: uppercase;
+      .sidebar-header {
         margin-bottom: 3rem;
       }
 
-      .about-content {
-        display: grid;
-        grid-template-columns: 2fr 1fr;
-        gap: 4rem;
-        align-items: start;
-      }
-
-      .about-text {
-        font-size: 1.5rem;
-        line-height: 1.6;
-      }
-
-      .highlights {
-        list-style: none;
-        font-size: 1.25rem;
-      }
-
-      .highlights li {
-        padding: 1rem 0;
-        border-bottom: 1px solid var(--text);
-        white-space: nowrap;
-      }
-
-      .highlights li:last-child {
-        border-bottom: none;
-      }
-
-      .projects-grid {
-        display: grid;
-        grid-template-columns: repeat(2, 1fr);
-        gap: 4rem;
-      }
-
-      .project {
-        text-decoration: none;
-        color: var(--text);
-        border: var(--border);
-        padding: 2rem;
-        background: var(--card-bg);
-        display: block;
-        transition: all 0.2s ease;
-        transform: translateY(0);
-      }
-
-      .project:hover {
-        transform: translateY(-8px);
-        background: var(--text);
-        color: var(--bg);
-        box-shadow: 8px 8px 0 rgba(28, 28, 28, 0.1);
-      }
-
-      .project-image {
-        width: 100%;
-        aspect-ratio: 16/9;
-        object-fit: cover;
-        border: var(--border);
-        margin-bottom: 2rem;
-        transition: border-color 0.2s ease;
-      }
-
-      .project:hover .project-image {
-        border-color: var(--bg);
-      }
-
-      .project-title {
-        font-size: 2rem;
-        font-weight: bold;
-        margin-bottom: 1rem;
-        text-transform: uppercase;
-        letter-spacing: -1px;
-      }
-
-      .project-desc {
+      .sidebar-title {
+        font-family: var(--font-mono);
         font-size: 1.1rem;
-        line-height: 1.6;
+        font-weight: 600;
+        color: var(--accent);
+        letter-spacing: -0.5px;
       }
 
-      .project-icons {
-        display: flex;
-        gap: 0.5rem;
-        margin-top: 1.5rem;
-        align-items: center;
+      .sidebar-subtitle {
+        font-size: 0.75rem;
+        color: var(--text-muted);
+        margin-top: 0.25rem;
+        font-family: var(--font-mono);
       }
 
-      .project-icon {
-        width: 24px;
-        height: 24px;
-        opacity: 0.7;
-        transition: opacity 0.2s ease;
-      }
-
-      .project:hover .project-icon {
-        opacity: 1;
-        filter: brightness(0) invert(1);
-      }
-
-      .aws-hover-icon {
-        display: none;
-      }
-
-      .project:hover .aws-hover-icon {
-        display: block;
-        filter: none;
-      }
-
-      .project:hover .aws-default-icon {
-        display: none;
-      }
-
-      .experience-grid {
-        display: grid;
-        grid-template-columns: 1fr;
-        gap: 2rem;
-      }
-
-      .experience-item {
-        border: var(--border);
-        padding: 2rem;
-        background: var(--card-bg);
-        display: grid;
-        grid-template-columns: auto 1fr;
-        gap: 2rem;
-        align-items: center;
-        transition: transform 0.2s ease, box-shadow 0.2s ease;
-      }
-
-      .experience-item:hover {
-        transform: translateY(-4px);
-        box-shadow: 6px 6px 0 rgba(28, 28, 28, 0.1);
-      }
-
-      .experience-logo {
-        width: 80px;
-        height: 80px;
-        object-fit: contain;
-        border: var(--border);
-        padding: 1rem;
-        background: white;
-      }
-
-      .experience-content {
+      .nav-list {
+        list-style: none;
         display: flex;
         flex-direction: column;
         gap: 0.5rem;
       }
 
-      .experience-role {
-        font-size: 1.5rem;
-        font-weight: bold;
-        text-transform: uppercase;
-        letter-spacing: -0.5px;
+      .nav-link {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        padding: 0.75rem 1rem;
+        color: var(--text);
+        text-decoration: none;
+        font-size: 0.95rem;
+        font-weight: 500;
+        border-radius: 8px;
+        transition: all 0.2s ease;
+        position: relative;
       }
 
-      .experience-company {
-        font-size: 1.25rem;
+      .nav-link:hover {
+        background: var(--bg-surface);
+        color: var(--text-bright);
+      }
+
+      .nav-link.active {
+        background: var(--bg-surface);
         color: var(--accent);
-        font-weight: 500;
+      }
+
+      .nav-link.active::before {
+        content: '';
+        position: absolute;
+        left: 0;
+        top: 50%;
+        transform: translateY(-50%);
+        width: 3px;
+        height: 60%;
+        background: var(--accent);
+        border-radius: 0 2px 2px 0;
+      }
+
+      .nav-icon {
+        font-size: 1rem;
+        width: 1.25rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        opacity: 0.8;
+      }
+
+      .nav-icon-img {
+        width: 1rem;
+        height: 1rem;
+        filter: brightness(0) invert(1);
+        opacity: 0.8;
+      }
+
+      .nav-link.active .nav-icon-img,
+      .nav-link:hover .nav-icon-img {
+        opacity: 1;
+      }
+
+      .sidebar-footer {
+        margin-top: auto;
+        padding-top: 2rem;
+        border-top: 1px solid var(--border);
+      }
+
+      .sidebar-footer-text {
+        font-size: 0.7rem;
+        color: var(--text-muted);
+        font-family: var(--font-mono);
+      }
+
+      /* Main Content */
+      .main {
+        margin-left: var(--sidebar-width);
+        flex: 1;
+        min-height: 100vh;
+        padding: 3rem 4rem;
+      }
+
+      .content {
+        max-width: var(--content-max);
+        margin: 0 auto;
+      }
+
+      /* Mobile */
+      .mobile-header {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 60px;
+        background: var(--bg-elevated);
+        border-bottom: 1px solid var(--border);
+        padding: 0 1.5rem;
+        align-items: center;
+        justify-content: space-between;
+        z-index: 101;
+      }
+
+      .mobile-title {
+        font-family: var(--font-mono);
+        font-size: 1rem;
+        font-weight: 600;
+        color: var(--accent);
+      }
+
+      .menu-toggle {
+        background: none;
+        border: none;
+        color: var(--text);
+        font-size: 1.5rem;
+        cursor: pointer;
+        padding: 0.5rem;
+      }
+
+      .sidebar-overlay {
+        display: none;
+        position: fixed;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.5);
+        z-index: 99;
+      }
+
+      @media (max-width: 768px) {
+        .sidebar {
+          transform: translateX(-100%);
+          transition: transform 0.3s ease;
+        }
+
+        .sidebar.open {
+          transform: translateX(0);
+        }
+
+        .sidebar-overlay.open {
+          display: block;
+        }
+
+        .mobile-header {
+          display: flex;
+        }
+
+        .main {
+          margin-left: 0;
+          padding: 80px 1.5rem 2rem;
+        }
+      }
+
+      /* Utility classes for pages */
+      .page-title {
+        font-size: 2.5rem;
+        font-weight: 700;
+        color: var(--text-bright);
+        letter-spacing: -1px;
+        margin-bottom: 0.5rem;
+      }
+
+      .page-subtitle {
+        font-size: 1.1rem;
+        color: var(--text-muted);
+        margin-bottom: 3rem;
+      }
+
+      .section {
+        margin-bottom: 4rem;
+      }
+
+      .section-title {
+        font-size: 1.25rem;
+        font-weight: 600;
+        color: var(--accent);
+        margin-bottom: 1.5rem;
         display: flex;
         align-items: center;
         gap: 0.75rem;
       }
 
-      .experience-label {
-        font-size: 0.75rem;
-        padding: 0.25rem 0.5rem;
-        background: var(--text);
-        color: var(--bg);
-        text-transform: uppercase;
-        letter-spacing: 0.5px;
-        font-weight: 600;
+      .section-title::after {
+        content: '';
+        flex: 1;
+        height: 1px;
+        background: var(--border);
       }
 
-      .experience-period {
-        font-size: 1rem;
-        font-weight: bold;
-        text-transform: uppercase;
-        letter-spacing: 0.5px;
-        opacity: 0.7;
+      .card {
+        background: var(--bg-elevated);
+        border: 1px solid var(--border);
+        border-radius: 12px;
+        padding: 1.5rem;
+        transition: all 0.2s ease;
       }
 
-      .experience-description {
-        font-size: 1.1rem;
-        margin-top: 0.5rem;
-        line-height: 1.4;
+      .card:hover {
+        border-color: var(--accent-secondary);
+        transform: translateY(-2px);
       }
 
-      .writing-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-        gap: 2rem;
-      }
-
-      .post {
-        padding: 2rem;
-        border: var(--border);
+      .card-link {
         text-decoration: none;
-        color: var(--text);
+        color: inherit;
+        display: block;
       }
 
-      .post-title {
-        font-size: 1.5rem;
-        font-weight: bold;
-        margin-bottom: 1rem;
+      .tag {
+        display: inline-block;
+        font-size: 0.75rem;
+        font-family: var(--font-mono);
+        padding: 0.25rem 0.5rem;
+        background: var(--bg-surface);
+        color: var(--accent);
+        border-radius: 4px;
       }
 
-      .experience-section {
-        display: grid;
-        grid-template-columns: 1fr auto;
-        gap: 4rem;
-        align-items: start;
+      a {
+        color: inherit;
+        text-decoration: none;
       }
 
-      .resume-widget {
-        position: sticky;
-        top: 2rem;
-        border: var(--border);
-        padding: 2rem;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        gap: 1rem;
-        cursor: pointer;
-        transition: transform 0.2s;
-        background: var(--bg);
+      a:hover {
+        color: inherit;
       }
 
-      .resume-widget:hover {
-        transform: translateY(-4px);
+      a:visited {
+        color: inherit;
       }
 
-      .resume-icon {
-        width: 40px;
-        height: 40px;
-        border: var(--border);
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-weight: bold;
-        font-size: 1.2rem;
+      a:focus {
+        outline: none;
       }
 
-      .resume-label {
-        font-size: 0.9rem;
-        text-transform: uppercase;
-        letter-spacing: 1px;
-      }
-
-      .modal-overlay {
-        position: fixed;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        background: rgba(255, 248, 240, 0.25);
-        backdrop-filter: blur(8px);
-        display: none;
-        justify-content: center;
-        align-items: center;
-        z-index: 1000;
-      }
-
-      .modal-overlay.active {
-        display: flex;
-      }
-
-      .resume-preview {
-        width: 70%;
-        height: 80vh;
-        border: var(--border);
-        background: white;
-        box-shadow: 0 4px 24px rgba(0, 0, 0, 0.1);
-      }
-
-      footer {
-        padding: 2rem;
-        text-align: center;
-        font-size: 0.9rem;
-      }
-
-      @media (max-width: 1024px) {
-        body {
-          padding-right: 0;
-        }
-
-        .content-wrapper {
-          padding: 0 2rem;
-          transform: none;
-        }
-
-        header {
-          padding: 2rem;
-          transform: none;
-        }
-
-        .hero {
-          padding: 4rem 2rem;
-          transform: none;
-        }
-
-        .section {
-          padding: 4rem 2rem;
-        }
-
-        .section-content {
-          transform: none;
-        }
-
-        .nav {
-          display: none;
-        }
-
-        .hero h1 {
-          font-size: 3.5rem;
-        }
-
-        .about-content {
-          grid-template-columns: 1fr;
-        }
-
-        .projects-grid {
-          grid-template-columns: 1fr;
-        }
-
-        .experience-section {
-          grid-template-columns: 1fr;
-        }
-
-        .experience-item {
-          grid-template-columns: 1fr;
-          text-align: center;
-          gap: 1rem;
-        }
-
-        .experience-logo {
-          width: 60px;
-          height: 60px;
-          justify-self: center;
-        }
-
-        .resume-widget {
-          position: static;
-          margin-top: 2rem;
-        }
-
-        .resume-preview {
-          width: 90%;
-          height: 90vh;
-        }
-      }
-
-      .hero-subitems {
-        display: flex;
-        flex-direction: column;
-        gap: 0.5rem;
-        margin-bottom: 3rem;
-      }
-
-      .hero-subitem {
-        font-size: 1.2rem;
-        opacity: 0.8;
+      a:focus-visible {
+        outline: none;
       }
     </style>
   </head>
   <body>
-    <nav class="nav">
-      <div class="nav-title">Navigate</div>
-      {sections.map(section => (
-        <a href={`#${section.id}`} class="nav-link">{section.label}</a>
-      ))}
-    </nav>
-
-    <div class="content-wrapper">
-      <header>{title}</header>
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+    
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar-header">
+        <div class="sidebar-title">akrm al-hakimi</div>
+        <div class="sidebar-subtitle">OSS for life!</div>
+      </div>
       
-      <section id="hero" class="hero">
-        <h1>{hero.heading}</h1>
-        <p>{hero.subheading}</p>
-        <p style="font-size: 1.2rem; margin-bottom: 3rem; opacity: 0.8;">Graduating December 2026</p>
-        <a href={hero.ctaLink}>{hero.cta}</a>
-      </section>
-
-      <section id="description" class="section">
-        <div class="section-content">
-          <h2 class="section-title">Description</h2>
-          <div class="about-content">
-            <p class="about-text">{about.content}</p>
-            <ul class="highlights">
-              {about.highlights.map(item => (
-                <li>{item}</li>
-              ))}
-            </ul>
-          </div>
-        </div>
-      </section>
-
-      <section id="projects" class="section">
-        <div class="section-content">
-          <h2 class="section-title">Projects</h2>
-          <div class="projects-grid">
-            {projects.map(project => (
-              <a href={project.url} class="project" target="_blank">
-                {project.thumbnail && <img src={project.thumbnail} alt={project.name} class="project-image" />}
-                <h3 class="project-title">{project.name}</h3>
-                <p class="project-desc">{project.description}</p>
-                {project.icons && (
-                  <div class="project-icons">
-                    {project.icons.map(icon => {
-                      if (project.hoverIcon && icon.includes('aws.svg')) {
-                        return (
-                          <>
-                            <img src={icon} alt="tech icon" class="project-icon aws-default-icon" />
-                            <img src={project.hoverIcon} alt="tech icon" class="project-icon aws-hover-icon" />
-                          </>
-                        );
-                      }
-                      return <img src={icon} alt="tech icon" class="project-icon" />;
-                    })}
-                  </div>
-                )}
+      <nav>
+        <ul class="nav-list">
+          {navItems.map(item => (
+            <li>
+              <a 
+                href={item.href} 
+                class:list={["nav-link", { active: currentPath === item.href || (item.href !== base && currentPath.startsWith(item.href)) }]}
+              >
+                <span class="nav-icon">
+                  <img src={item.icon} alt="" class="nav-icon-img" />
+                </span>
+                {item.label}
               </a>
-            ))}
-          </div>
-        </div>
-      </section>
+            </li>
+          ))}
+        </ul>
+      </nav>
+      
+      <div class="sidebar-footer">
+        <p class="sidebar-footer-text">Last updated: {new Date().toLocaleDateString('en-US', { month: 'long', year: 'numeric' })}</p>
+      </div>
+    </aside>
 
-      <section id="experience" class="section">
-        <div class="section-content">
-          <h2 class="section-title">Experience</h2>
-          <div class="experience-section">
-            <div class="experience-grid">
-              {experience.items.map(item => (
-                <div class="experience-item">
-                  <img src={item.logo} alt={`${item.company} logo`} class="experience-logo" />
-                  <div class="experience-content">
-                    <div class="experience-role">{item.role}</div>
-                    <div class="experience-company">
-                      {item.company}
-                      {item.label && <span class="experience-label">{item.label}</span>}
-                    </div>
-                    <div class="experience-period">{item.period}</div>
-                    <div class="experience-description">{item.description}</div>
-                  </div>
-                </div>
-              ))}
-            </div>
-            <div class="resume-widget" id="resumeWidget">
-              <div class="resume-icon">CV</div>
-              <div class="resume-label">View Resume</div>
-            </div>
-          </div>
-        </div>
-      </section>
+    <header class="mobile-header">
+      <span class="mobile-title">akrm</span>
+      <button class="menu-toggle" id="menuToggle" aria-label="Toggle menu">☰</button>
+    </header>
 
-      <footer>
-        <p>© {new Date().getFullYear()}</p>
-      </footer>
-    </div>
-
-    <div class="modal-overlay" id="modalOverlay">
-      <iframe class="resume-preview" src={`${import.meta.env.BASE_URL}/akrm-resume.pdf`}></iframe>
-    </div>
+    <main class="main">
+      <div class="content">
+        <slot />
+      </div>
+    </main>
 
     <script>
-      const resumeWidget = document.getElementById('resumeWidget');
-      const modalOverlay = document.getElementById('modalOverlay');
+      const menuToggle = document.getElementById('menuToggle');
+      const sidebar = document.getElementById('sidebar');
+      const overlay = document.getElementById('sidebarOverlay');
 
-      resumeWidget.addEventListener('click', () => {
-        modalOverlay.classList.add('active');
-        document.body.style.overflow = 'hidden';
-      });
+      function toggleMenu() {
+        sidebar?.classList.toggle('open');
+        overlay?.classList.toggle('open');
+      }
 
-      modalOverlay.addEventListener('click', (e) => {
-        if (e.target === modalOverlay) {
-          modalOverlay.classList.remove('active');
-          document.body.style.overflow = '';
-        }
-      });
-
-      // Close on escape key
-      document.addEventListener('keydown', (e) => {
-        if (e.key === 'Escape' && modalOverlay.classList.contains('active')) {
-          modalOverlay.classList.remove('active');
-          document.body.style.overflow = '';
-        }
-      });
+      menuToggle?.addEventListener('click', toggleMenu);
+      overlay?.addEventListener('click', toggleMenu);
     </script>
   </body>
 </html>
-
-<script>
-  const sections = document.querySelectorAll('section[id]');
-  const navLinks = document.querySelectorAll('.nav-link');
-
-  function setActiveLink() {
-    const scrollPosition = window.scrollY;
-
-    sections.forEach(section => {
-      const sectionTop = section.offsetTop;
-      const sectionHeight = section.offsetHeight;
-      const sectionId = section.getAttribute('id');
-      
-      if (scrollPosition >= sectionTop - 100 && 
-          scrollPosition < sectionTop + sectionHeight - 100) {
-        navLinks.forEach(link => {
-          link.classList.remove('active');
-          if (link.getAttribute('href') === `#${sectionId}`) {
-            link.classList.add('active');
-          }
-        });
-      }
-    });
-  }
-
-  window.addEventListener('scroll', setActiveLink);
-  setActiveLink(); // Set initial state
-</script>
-
