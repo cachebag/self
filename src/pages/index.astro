@@ -1,175 +1,46 @@
 ---
 import Layout from "../layouts/Layout.astro";
-import { posts } from "../data/posts";
-import { marked } from "marked";
-
-const sortedPosts = [...posts].sort((a, b) => 
-  new Date(b.date).getTime() - new Date(a.date).getTime()
-);
 ---
 
-<Layout title="Home | Akrm Al-Hakimi">
-  <h1 class="page-title">Blog</h1>
-  <p class="page-subtitle">Some thoughts on some things.</p>
+<Layout title="akrm al-hakimi">
+  <h1>hello, there!</h1>
 
-  <section class="posts-section">
-    {sortedPosts.length > 0 ? (
-      <div class="posts-list">
-        {sortedPosts.map(post => (
-          <article class="post-card card">
-            <header class="post-header">
-              <h2 class="post-title">{post.title}</h2>
-              <time class="post-date">{new Date(post.date).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}</time>
-            </header>
-            <div class="post-content" set:html={marked.parse(post.content)} />
-          </article>
-        ))}
-      </div>
-    ) : (
-      <div class="empty-state">
-        <div class="empty-icon">✎</div>
-        <p class="empty-text">No posts yet. Check back soon!</p>
-      </div>
-    )}
-  </section>
+  <p>
+   my name is akrm (or ace). i'm currently a software engineer at bosch engineering gmbh, where i work on the VDS team.
+   i'm also a senior at wayne state university, where i study computer science. my graduation date is december 2026.
+  </p>
+
+  <p>
+    in my free time i <a href="https://github.com/cachebag" target="_blank">build and maintain</a> open source
+    software, watch and play basketball, and spend time with my family.
+  </p>
+
+  <hr />
+
+  <h2>what's taking up my time</h2>
+  <p>
+    i've recently closed on a house which gives me the oppurtunity to finally sit down and build my dream home lab. it should be noted
+    that i am embrassingly new to this space and while i can get some simple things up and running, the vision for what i want 
+    and my actual domain knowledge are incredibly separated from each other right now.
+  </p>
+  <p>
+    i'll be taking on this project in babysteps, starting with simply getting a VPS running to host <a href="https://github.com/cachebag/payme" target="_blank">payme</a>. 
+    hopefully next time i update this page, i'll have a bit more to show for it.
+  </p>
+
+  <img src={`${import.meta.env.BASE_URL}home.jpeg`} alt="home lab" class="photo" />
+
 </Layout>
 
 <style>
-  .posts-list {
-    display: flex;
-    flex-direction: column;
-    gap: 1.5rem;
-  }
-
-  .post-card {
-    transition: all 0.2s ease;
-  }
-
-  .post-card:hover {
-    border-color: var(--accent-secondary);
-  }
-
-  .post-header {
-    margin-bottom: 1.5rem;
-    padding-bottom: 1rem;
-    border-bottom: 1px solid var(--border);
-  }
-
-  .post-title {
-    font-size: 1.75rem;
-    font-weight: 600;
-    color: var(--text-bright);
-    margin-bottom: 0.5rem;
-    letter-spacing: -0.5px;
-  }
-
-  .post-date {
-    font-family: var(--font-mono);
-    font-size: 0.85rem;
-    color: var(--text-muted);
-  }
-
-  .post-content {
-    font-family: var(--font-mono);
-    font-size: 1.05rem;
-    line-height: 1.8;
-    color: var(--text);
-  }
-
-  .post-content :global(h1),
-  .post-content :global(h2),
-  .post-content :global(h3),
-  .post-content :global(h4) {
-    color: var(--text-bright);
-    margin-top: 2rem;
-    margin-bottom: 1rem;
-    font-weight: 600;
-  }
-
-  .post-content :global(h1) {
-    font-size: 2rem;
-  }
-
-  .post-content :global(h2) {
-    font-size: 1.5rem;
-  }
-
-  .post-content :global(h3) {
-    font-size: 1.25rem;
-  }
-
-  .post-content :global(p) {
-    margin-bottom: 1.5rem;
-  }
-
-  .post-content :global(ul),
-  .post-content :global(ol) {
-    margin-bottom: 1.5rem;
-    padding-left: 1.5rem;
-  }
-
-  .post-content :global(li) {
-    margin-bottom: 0.5rem;
-  }
-
-  .post-content :global(code) {
-    background: var(--bg-surface);
-    padding: 0.2rem 0.4rem;
-    border-radius: 4px;
-    font-family: var(--font-mono);
-    font-size: 0.9em;
-    color: var(--accent);
-  }
-
-  .post-content :global(pre) {
-    background: var(--bg-surface);
-    padding: 1rem;
-    border-radius: 8px;
-    overflow-x: auto;
-    margin-bottom: 1.5rem;
-  }
-
-  .post-content :global(pre code) {
-    background: transparent;
-    padding: 0;
-    color: var(--text);
-  }
-
-  .post-content :global(blockquote) {
-    border-left: 3px solid var(--accent);
-    padding-left: 1rem;
-    margin-left: 0;
-    margin-bottom: 1.5rem;
-    color: var(--text-muted);
-    font-style: italic;
-  }
-
-  .post-content :global(a) {
-    color: inherit;
-    text-decoration: underline;
-    text-decoration-color: var(--text-muted);
-  }
-
-  .post-content :global(a:hover) {
-    text-decoration-color: var(--accent);
-  }
-
-  .empty-state {
-    text-align: center;
-    padding: 4rem 2rem;
-    background: var(--bg-elevated);
-    border: 1px dashed var(--border);
-    border-radius: 12px;
-  }
-
-  .empty-icon {
-    font-size: 2.5rem;
-    margin-bottom: 1rem;
-    opacity: 0.5;
-  }
-
-  .empty-text {
-    color: var(--text-muted);
-    font-size: 1rem;
+  .photo {
+    width: 100%;
+    max-width: 480px;
+    border: 1px solid #333;
+    border-radius: 3px;
+    margin-top: 0.5rem;
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
   }
 </style>

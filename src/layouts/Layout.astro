@@ -9,9 +9,8 @@ const { title, description = "Personal site" } = Astro.props;
 const base = import.meta.env.BASE_URL;
 
 const navItems = [
-  { href: `${base}`, label: "Blog", icon: `${base}blog.svg` },
-  { href: `${base}about/`, label: "About", icon: `${base}repo.svg` },
-  { href: `${base}projects/`, label: "Work", icon: `${base}work.svg` }
+  { href: `${base}`, label: "home" },
+  { href: `${base}work/`, label: "work" }
 ];
 
 const currentPath = Astro.url.pathname;
@@ -25,400 +24,163 @@ const currentPath = Astro.url.pathname;
     <meta name="description" content={description} />
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <style>
-      :root {
-        /* Nord Polar Night */
-        --nord0: #2E3440;
-        --nord1: #3B4252;
-        --nord2: #434C5E;
-        --nord3: #4C566A;
-        
-        /* Nord Snow Storm */
-        --nord4: #D8DEE9;
-        --nord5: #E5E9F0;
-        --nord6: #ECEFF4;
-        
-        /* Nord Frost */
-        --nord7: #8FBCBB;
-        --nord8: #88C0D0;
-        --nord9: #81A1C1;
-        --nord10: #5E81AC;
-        
-        /* Nord Aurora */
-        --nord11: #BF616A;
-        --nord12: #D08770;
-        --nord13: #EBCB8B;
-        --nord14: #A3BE8C;
-        --nord15: #B48EAD;
-
-        /* Theme mappings */
-        --bg: var(--nord0);
-        --bg-elevated: var(--nord1);
-        --bg-surface: var(--nord2);
-        --text: var(--nord4);
-        --text-muted: var(--nord3);
-        --text-bright: var(--nord6);
-        --accent: var(--nord8);
-        --accent-secondary: var(--nord9);
-        --border: var(--nord3);
-        
-        --font-display: 'Outfit', system-ui, sans-serif;
-        --font-mono: 'Fira Code', 'JetBrains Mono', monospace;
-        
-        --sidebar-width: 220px;
-        --content-max: 900px;
-      }
-
-      * {
-        margin: 0;
-        padding: 0;
-        box-sizing: border-box;
-      }
-
-      html {
-        scroll-behavior: smooth;
-      }
-
-      body {
-        background: var(--bg);
-        color: var(--text);
-        font-family: var(--font-display);
-        min-height: 100vh;
-        line-height: 1.7;
-        display: flex;
-      }
-
-      /* Sidebar */
-      .sidebar {
-        position: fixed;
-        left: 0;
-        top: 0;
-        bottom: 0;
-        width: var(--sidebar-width);
-        background: var(--bg-elevated);
-        border-right: 1px solid var(--border);
-        padding: 2rem 1.5rem;
-        display: flex;
-        flex-direction: column;
-        z-index: 100;
-      }
-
-      .sidebar-header {
-        margin-bottom: 3rem;
-      }
-
-      .sidebar-title {
-        font-family: var(--font-mono);
-        font-size: 1.1rem;
-        font-weight: 600;
-        color: var(--accent);
-        letter-spacing: -0.5px;
-      }
-
-      .sidebar-subtitle {
-        font-size: 0.75rem;
-        color: var(--text-muted);
-        margin-top: 0.25rem;
-        font-family: var(--font-mono);
-      }
-
-      .nav-list {
-        list-style: none;
-        display: flex;
-        flex-direction: column;
-        gap: 0.5rem;
-      }
-
-      .nav-link {
-        display: flex;
-        align-items: center;
-        gap: 0.75rem;
-        padding: 0.75rem 1rem;
-        color: var(--text);
-        text-decoration: none;
-        font-size: 0.95rem;
-        font-weight: 500;
-        border-radius: 8px;
-        transition: all 0.2s ease;
-        position: relative;
-      }
-
-      .nav-link:hover {
-        background: var(--bg-surface);
-        color: var(--text-bright);
-      }
-
-      .nav-link.active {
-        background: var(--bg-surface);
-        color: var(--accent);
-      }
-
-      .nav-link.active::before {
-        content: '';
-        position: absolute;
-        left: 0;
-        top: 50%;
-        transform: translateY(-50%);
-        width: 3px;
-        height: 60%;
-        background: var(--accent);
-        border-radius: 0 2px 2px 0;
-      }
-
-      .nav-icon {
-        font-size: 1rem;
-        width: 1.25rem;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        opacity: 0.8;
-      }
-
-      .nav-icon-img {
-        width: 1rem;
-        height: 1rem;
-        filter: brightness(0) invert(1);
-        opacity: 0.8;
-      }
-
-      .nav-link.active .nav-icon-img,
-      .nav-link:hover .nav-icon-img {
-        opacity: 1;
-      }
-
-      .sidebar-footer {
-        margin-top: auto;
-        padding-top: 2rem;
-        border-top: 1px solid var(--border);
-      }
-
-      .sidebar-footer-text {
-        font-size: 0.7rem;
-        color: var(--text-muted);
-        font-family: var(--font-mono);
-      }
-
-      /* Main Content */
-      .main {
-        margin-left: var(--sidebar-width);
-        flex: 1;
-        min-height: 100vh;
-        padding: 3rem 4rem;
-      }
-
-      .content {
-        max-width: var(--content-max);
-        margin: 0 auto;
-      }
-
-      /* Mobile */
-      .mobile-header {
-        display: none;
-        position: fixed;
-        top: 0;
-        left: 0;
-        right: 0;
-        height: 60px;
-        background: var(--bg-elevated);
-        border-bottom: 1px solid var(--border);
-        padding: 0 1.5rem;
-        align-items: center;
-        justify-content: space-between;
-        z-index: 101;
-      }
-
-      .mobile-title {
-        font-family: var(--font-mono);
-        font-size: 1rem;
-        font-weight: 600;
-        color: var(--accent);
-      }
-
-      .menu-toggle {
-        background: none;
-        border: none;
-        color: var(--text);
-        font-size: 1.5rem;
-        cursor: pointer;
-        padding: 0.5rem;
-      }
-
-      .sidebar-overlay {
-        display: none;
-        position: fixed;
-        inset: 0;
-        background: rgba(0, 0, 0, 0.5);
-        z-index: 99;
-      }
-
-      @media (max-width: 768px) {
-        .sidebar {
-          transform: translateX(-100%);
-          transition: transform 0.3s ease;
-        }
-
-        .sidebar.open {
-          transform: translateX(0);
-        }
-
-        .sidebar-overlay.open {
-          display: block;
-        }
-
-        .mobile-header {
-          display: flex;
-        }
-
-        .main {
-          margin-left: 0;
-          padding: 80px 1.5rem 2rem;
-        }
-      }
-
-      /* Utility classes for pages */
-      .page-title {
-        font-size: 2.5rem;
-        font-weight: 700;
-        color: var(--text-bright);
-        letter-spacing: -1px;
-        margin-bottom: 0.5rem;
-      }
-
-      .page-subtitle {
-        font-size: 1.1rem;
-        color: var(--text-muted);
-        margin-bottom: 3rem;
-      }
-
-      .section {
-        margin-bottom: 4rem;
-      }
-
-      .section-title {
-        font-size: 1.25rem;
-        font-weight: 600;
-        color: var(--accent);
-        margin-bottom: 1.5rem;
-        display: flex;
-        align-items: center;
-        gap: 0.75rem;
-      }
-
-      .section-title::after {
-        content: '';
-        flex: 1;
-        height: 1px;
-        background: var(--border);
-      }
-
-      .card {
-        background: var(--bg-elevated);
-        border: 1px solid var(--border);
-        border-radius: 12px;
-        padding: 1.5rem;
-        transition: all 0.2s ease;
-      }
-
-      .card:hover {
-        border-color: var(--accent-secondary);
-        transform: translateY(-2px);
-      }
-
-      .card-link {
-        text-decoration: none;
-        color: inherit;
-        display: block;
-      }
-
-      .tag {
-        display: inline-block;
-        font-size: 0.75rem;
-        font-family: var(--font-mono);
-        padding: 0.25rem 0.5rem;
-        background: var(--bg-surface);
-        color: var(--accent);
-        border-radius: 4px;
-      }
-
-      a {
-        color: inherit;
-        text-decoration: none;
-      }
-
-      a:hover {
-        color: inherit;
-      }
-
-      a:visited {
-        color: inherit;
-      }
-
-      a:focus {
-        outline: none;
-      }
-
-      a:focus-visible {
-        outline: none;
-      }
-    </style>
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
   </head>
   <body>
-    <div class="sidebar-overlay" id="sidebarOverlay"></div>
-    
-    <aside class="sidebar" id="sidebar">
-      <div class="sidebar-header">
-        <div class="sidebar-title">akrm al-hakimi</div>
-        <div class="sidebar-subtitle">OSS for life!</div>
-      </div>
-      
+    <div class="container">
       <nav>
-        <ul class="nav-list">
-          {navItems.map(item => (
-            <li>
-              <a 
-                href={item.href} 
-                class:list={["nav-link", { active: currentPath === item.href || (item.href !== base && currentPath.startsWith(item.href)) }]}
-              >
-                <span class="nav-icon">
-                  <img src={item.icon} alt="" class="nav-icon-img" />
-                </span>
-                {item.label}
-              </a>
-            </li>
-          ))}
-        </ul>
+        {navItems.map((item, i) => (
+          <>
+            <a
+              href={item.href}
+              class:list={{ active: currentPath === item.href || (item.href !== base && currentPath.startsWith(item.href)) }}
+            >{item.label}</a>{i < navItems.length - 1 && <span class="sep">&bull;</span>}
+          </>
+        ))}
       </nav>
-      
-      <div class="sidebar-footer">
-        <p class="sidebar-footer-text">Last updated: {new Date().toLocaleDateString('en-US', { month: 'long', year: 'numeric' })}</p>
-      </div>
-    </aside>
 
-    <header class="mobile-header">
-      <span class="mobile-title">akrm</span>
-      <button class="menu-toggle" id="menuToggle" aria-label="Toggle menu">☰</button>
-    </header>
-
-    <main class="main">
-      <div class="content">
+      <main>
         <slot />
-      </div>
-    </main>
-
-    <script>
-      const menuToggle = document.getElementById('menuToggle');
-      const sidebar = document.getElementById('sidebar');
-      const overlay = document.getElementById('sidebarOverlay');
-
-      function toggleMenu() {
-        sidebar?.classList.toggle('open');
-        overlay?.classList.toggle('open');
-      }
-
-      menuToggle?.addEventListener('click', toggleMenu);
-      overlay?.addEventListener('click', toggleMenu);
-    </script>
+      </main>
+    </div>
   </body>
 </html>
+
+<style>
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    background: #1a1a1a;
+    color: #d4d4d4;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 14px;
+    line-height: 1.7;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .container {
+    max-width: 640px;
+    margin: 0 auto;
+    padding: 3rem 1.5rem 6rem;
+  }
+
+  nav {
+    margin-bottom: 2.5rem;
+    font-size: 14px;
+  }
+
+  nav a {
+    color: #d4d4d4;
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+
+  nav a:hover,
+  nav a.active {
+    color: #5cb85c;
+  }
+
+  .sep {
+    margin: 0 0.5rem;
+    color: #888;
+  }
+
+  main :global(a) {
+    color: #5cb85c;
+    text-decoration: underline;
+    text-underline-offset: 2px;
+  }
+
+  main :global(a:hover) {
+    color: #7cd67c;
+  }
+
+  main :global(a:visited) {
+    color: #5cb85c;
+  }
+
+  main :global(h1) {
+    font-size: 1.4rem;
+    font-weight: 600;
+    margin-bottom: 1rem;
+    line-height: 1.3;
+  }
+
+  main :global(h2) {
+    font-size: 1.1rem;
+    font-weight: 600;
+    margin-top: 2rem;
+    margin-bottom: 0.75rem;
+  }
+
+  main :global(h3) {
+    font-size: 1rem;
+    font-weight: 600;
+    margin-top: 1.5rem;
+    margin-bottom: 0.5rem;
+  }
+
+  main :global(p) {
+    margin-bottom: 1rem;
+  }
+
+  main :global(ul),
+  main :global(ol) {
+    margin-bottom: 1rem;
+    padding-left: 1.25rem;
+  }
+
+  main :global(li) {
+    margin-bottom: 0.25rem;
+  }
+
+  main :global(code) {
+    background: #2a2a2a;
+    padding: 0.15rem 0.35rem;
+    border-radius: 3px;
+    font-size: 0.9em;
+  }
+
+  main :global(pre) {
+    background: #2a2a2a;
+    padding: 1rem;
+    border-radius: 4px;
+    overflow-x: auto;
+    margin-bottom: 1rem;
+    font-size: 0.9em;
+  }
+
+  main :global(pre code) {
+    background: transparent;
+    padding: 0;
+  }
+
+  main :global(blockquote) {
+    border-left: 2px solid #444;
+    padding-left: 1rem;
+    margin-left: 0;
+    margin-bottom: 1rem;
+    color: #888;
+    font-style: italic;
+  }
+
+  main :global(hr) {
+    border: none;
+    border-top: 1px solid #333;
+    margin: 2rem 0;
+  }
+
+  @media (max-width: 480px) {
+    .container {
+      padding: 2rem 1.25rem 4rem;
+    }
+  }
+</style>

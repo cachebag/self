@@ -1,0 +1,128 @@
+---
+import Layout from "../layouts/Layout.astro";
+
+const projects = [
+  {
+    name: "zerobrew",
+    url: "https://github.com/lucasgelfond/zerobrew",
+    description: "optimized client and alternative for homebrew",
+    image: "https://opengraph.githubassets.com/1/lucasgelfond/zerobrew"
+  },
+  {
+    name: "nmrs",
+    url: "https://github.com/cachebag/nmrs",
+    description: "rust bindings for NetworkManager + Wayland-compatible GUI",
+    image: "https://opengraph.githubassets.com/1/cachebag/nmrs"
+  },
+  {
+    name: "payme",
+    url: "https://github.com/cachebag/payme",
+    description: "personal finance tracker built for my homelab",
+    image: "https://opengraph.githubassets.com/1/cachebag/payme"
+  }
+];
+
+const contributions = [
+  {
+    name: "rustup",
+    url: "https://github.com/rust-lang/rustup",
+    description: "The Rust toolchain installer",
+    image: "https://opengraph.githubassets.com/1/rust-lang/rustup"
+  },
+  {
+    name: "zbus",
+    url: "https://github.com/z-galaxy/zbus",
+    description: "A Rust API for D-Bus communication",
+    image: "https://opengraph.githubassets.com/1/z-galaxy/zbus",
+  }
+];
+---
+
+<Layout title="software | akrm al-hakimi">
+  <h1>software</h1>
+
+  <p>
+    i've been fortunate enough to work on a nice selection of software, mainly built in rust, that i both own and contribute to/maintain.
+    while my professional work currently is primarily in go, OSS in rust is my passion. i believe the future of software built with rust is exceptionally promising.
+  </p>
+
+  <p>
+    i joined the <a href="https://github.com/lucasgelfond/zerobrew" target="_blank">zerobrew</a> project in january 2026
+    and helped ramp up the project to where it is today. some of the notable things we're working on there are: 
+
+    <ul>
+      <li>CDN: we'd like to eventually build our packages on a dedicated CDN to further the perf/speed gains we've seen with using rust</li>
+      <li>intel: currently we have a <a href="https://github.com/lucasgelfond/zerobrew/issues/286" target="_blank">huge bottleneck</a> around building some packages for intel as well as a reliable CI workflow for it</li>
+      <li>extended cask support: we're working on extending the cask support to include more packages, most notably, desktop applications such as claude code desktop or ghostty, for example</li>
+    </ul>
+  </p>
+
+  <p>
+    ...among many other things, we're incredibly excited about the future of zerobrew and the impact it can have on both the rust community and the vast ecosystem of package managers.
+  </p>
+
+  <p>
+    beyond the new and exciting work i've done with zerobrew, i've also had a lot of fun contributing to <a href="https://github.com/rust-lang/rustup" target="_blank">rustup</a>, as well as working on some of my own projects and the dependencies i rely on for them.
+    <a href="https://github.com/cachebag/nmrs" target="_blank">nmrs</a> is a project i've been working on for a while now; it is a set of rust bindings for NetworkManager over D-Bus.
+    by extension, i've also contributed a fairly great deal to zbus <a href="https://github.com/z-galaxy/zbus" target="_blank">zbus</a>, which is essentially the underlying library for nmrs.
+  </p>
+
+  <p>
+    i love talking about the work i'm doing (or really anything else revolving around OSS) so if you'd like to chat, please reach out! i've left a list of my socials below.
+    <ul>
+      <li>email: <a href="mailto:alhakimiakrmj@gmail.com">alhakimiakrmj@gmail.com</a></li>
+      <li>matrix: <a href="https://app.element.io/#/room/#zbus:matrix.org">@cachebag:matrix.org</a></li>
+      <li>x(twitter): <a href="https://x.com/cachebagged">cachebagged</a></li>
+      <li>linkedin: <a href="https://www.linkedin.com/in/akrmalhakimi/">akrm al-hakimi</a></li>
+    </ul>
+  </p>
+
+  <p>
+    i've also left a list of my projects below.
+  </p>
+
+  <h2>projects</h2>
+  <ul>
+    {projects.map(project => (
+      <li>
+        <a href={project.url} target="_blank">{project.name}</a> &mdash; {project.description}
+        {project.image && (
+          <a href={project.url} target="_blank" class="thumb">
+            <img src={project.image} alt={project.name} />
+          </a>
+        )}
+      </li>
+    ))}
+  </ul>
+
+  <h2>other</h2>
+  <ul>
+    {contributions.map(item => (
+      <li>
+        <a href={item.url} target="_blank">{item.name}</a> &mdash; {item.description}
+        {item.image && (
+          <a href={item.url} target="_blank" class="thumb">
+            <img src={item.image} alt={item.name} />
+          </a>
+        )}
+      </li>
+    ))}
+  </ul>
+</Layout>
+
+<style>
+  .thumb {
+    display: inline-block;
+    margin-top: 0.35rem;
+  }
+
+  .thumb img {
+    width: 280px;
+    height: 140px;
+    object-fit: cover;
+    object-position: top left;
+    border: 1px solid #333;
+    border-radius: 3px;
+    display: block;
+  }
+</style>
