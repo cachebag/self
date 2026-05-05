@@ -1,107 +1,75 @@
 ---
 import Layout from "../layouts/Layout.astro";
+import { journalEntries } from "../data/journal";
+
+const base = import.meta.env.BASE_URL;
+
+function formatListDate(iso: string) {
+  return new Date(iso + "T12:00:00").toLocaleDateString("en-US", {
+    year: "numeric",
+    month: "numeric",
+    day: "numeric",
+  });
+}
 ---
 
 <Layout title="akrm al-hakimi">
   <h1>hello, there!</h1>
 
   <p>
-  my name is akrm (or ace). i'm currently a software engineer at robert bosch llc, where i work on the vehicle data solutions team.
-   i'm also a senior at wayne state university, where i study computer science. my graduation date is december 2026.
+    my name is akrm (or ace). i'm currently a software engineer at robert bosch llc, where i am on the
+    vehicle data solutions team, working on distributed vehicle telemtry. i'm also a senior at wayne state university, where i study computer science.
+    my graduation date is december 2026.
   </p>
 
   <p>
-    in my free time i <a href="https://github.com/cachebag" target="_blank">build and maintain</a> open source
-    software, watch and play basketball, and spend time with my family.
+    in my free time i <a href="https://github.com/cachebag" target="_blank" rel="noopener noreferrer">build and maintain</a>
+    open source software, watch and play basketball, and spend time with my family.
   </p>
 
   <hr />
 
-  <h2>what's taking up my time</h2>
-  <h4>4/12/2026</h4>
-  <p>
-    i started my position at bosch a week ago, and it has been pretty intense. it goes without saying my role here is a bit 
-    unorthodox, given that i have a bit more experience going into this, so it seems that i've skipped a few of the formalities that other interns need to experience.
+  <h2>journal</h2>
+  <p class="section-note">
+    <a href={`${base}journal/`}>all posts</a>
   </p>
 
-  <p>
-    it may also be that those formalities are still something i'll need to do, but regardless, what intrigued me was that i was pretty much thrown into the fire 
-    from day 2. the codebase is quite complex. their cloud stack in particular is what makes me scratch my head and it's all in go. 
-  </p>
-
-  <p>
-    i am familiar with go, but switching to it mentally is quite taxing, coming from a rust background. i am constantly reaching for things that simply aren't there due to the 
-    simplicity of go. then there's the various modules, shared utilities and other programs across the project that are seemingly very tightly coupled. 
-    lots of different pieces of our platform talk to eachother in pretty intricate ways, and wrapping my head around that has been a huge pain, being frank.
-  </p>
-
-  <p>
-    i think more than anything though, the mental shift in the actual development process has been quite mind bending for me. though my background is in engineering (internships the last 2 years),
-    i've kind of been the leader of my projects. i had a high level goal that could be solved in really, anyway i saw fit.
-    that came with its benefits, but i'm seeing the downsides of it as well, now that i'm working here. 
-  </p>
-
-  <p>
-    having to reason about the architecture, design and techincal implications of a project is a complete 180 from where i have been for the last 1-2 years, 
-    which was "let's solve this problem, someway, somehow". i focused on getting to the result, and along the way if i could learn a bit about why a broader design pattern 
-    fits this particular domain, it was a plus for me. 
-  </p>
-
-  <p>
-    but it's kind of the reverse now. it's still quite early, but it's clear that i have to first think about how we want to solve this problem, engage in discourse about 
-    alternatives, tradeoffs, etc. then we need to actually organize the rampup in development, and only then do we start writing the code. 
-  </p>
-
-  <p>
-    this may seem obvious to many, and truthfully i know this is how any good work is completed but being on the ground floor of that process has been quite an adjustment for me.
-  </p>
-
-  <p>
-    i say all this to say that i am well aware of how crucial being in this environment is for my development as an engineer. as insane as this first week has been, 
-    i could not be more grateful for that fact that every body around me is magnitudes smarter than me. it would be easy for me to express how much of an imposter i feel like right now;
-    of course i think that there's something inherently wrong with the fact that me, of all people, is engaging with very important conversations happening around the initial phase 
-    of a very complex project-- but i don't think i would want it to be any other way. 
-  </p>
-
-  <p>
-    i had been groaning about this to my fiance for a while. my last internship turned so stale that i began to feel worried i would stagnate as an engineer and be stuck doing glorified automation / IT work 
-    from the moment i graduate to when i retire. it seemed like that was where the start of my early career was headed. but now i have been given this oppurtunity to be engaged in something 
-    directly relevant to my goals as a programmer, both professional and personally, and i intend on taking advantage of every second. 
-  </p>
-
-  <p>
-    on the more personal side of things, it's also given me the chance to work out a rigorus routine for myself. something i had been missing from my last two internships. 
-    now that i'm stepping my foot into this door that is my graduation, i feel much more comfortable committing all of my attention to this job, and it's been very enjoyable to 
-    come into the office and focus on doing what i love (i need to make a post about that soon: i have some very strong thoughts about this career i've picked for myself).
-  </p>
-
-  <p>
-    anyways, i can't tell if any of what i said was coherent but it was a well needed yapathon.
-  </p>
-  <h4>3/10/2026</h4>
-  <p>
-    i've recently closed on a house which gives me the oppurtunity to finally sit down and build my dream home lab. it should be noted
-    that i am embrassingly new to this space and while i can get some simple things up and running, the vision for what i want 
-    and my actual domain knowledge are incredibly separated from each other right now.
-  </p>
-  <p>
-    i'll be taking on this project in babysteps, starting with simply getting a VPS running to host <a href="https://github.com/cachebag/payme" target="_blank">payme</a>. 
-    hopefully next time i update this page, i'll have a bit more to show for it.
-  </p>
-
-  <img src={`${import.meta.env.BASE_URL}home.jpeg`} alt="home lab" class="photo" />
-
+  <ul class="entry-list">
+    {journalEntries.map((e) => (
+      <li>
+        <a href={`${base}journal/${e.slug}/`}>{e.title}</a>
+        <span class="meta">
+          <time datetime={e.date}>{formatListDate(e.date)}</time>
+        </span>
+      </li>
+    ))}
+  </ul>
 </Layout>
 
 <style>
-  .photo {
-    width: 100%;
-    max-width: 480px;
-    border: 1px solid #333;
-    border-radius: 3px;
-    margin-top: 0.5rem;
+  .section-note {
+    color: #888;
+    font-size: 0.9rem;
+    margin-bottom: 1.25rem;
+  }
+
+  .entry-list {
+    list-style: none;
+    padding-left: 0;
+  }
+
+  .entry-list li {
+    margin-bottom: 0.85rem;
+  }
+
+  .entry-list a {
+    font-weight: 500;
+  }
+
+  .meta {
     display: block;
-    margin-left: auto;
-    margin-right: auto;
+    color: #888;
+    font-size: 0.9rem;
+    margin-top: 0.15rem;
   }
 </style>

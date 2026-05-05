@@ -1,0 +1,65 @@
+---
+import Layout from "../../layouts/Layout.astro";
+import { journalEntries } from "../../data/journal";
+
+type JournalEntryModule = { default: (props: Record<string, never>) => unknown };
+
+const entryGlob = import.meta.glob("../../components/journal/entries/*.astro", {
+  eager: true,
+}) as Record<string, JournalEntryModule>;
+
+export function getStaticPaths() {
+  return journalEntries.map((e) => ({ params: { slug: e.slug } }));
+}
+
+function getEntryComponent(slug: string): JournalEntryModule["default"] | null {
+  const key = Object.keys(entryGlob).find((k) => k.endsWith(`/${slug}.astro`));
+  if (!key) return null;
+  return entryGlob[key].default;
+}
+
+const { slug } = Astro.params;
+const meta = journalEntries.find((e) => e.slug === slug);
+const Content = slug ? getEntryComponent(slug) : null;
+
+if (!meta || !Content) {
+  throw new Error(`Journal entry missing for slug "${slug}": add ${slug}.astro under entries/ or update src/data/journal.ts.`);
+}
+
+const formattedDate = new Date(meta.date + "T12:00:00").toLocaleDateString("en-US", {
+  year: "numeric",
+  month: "numeric",
+  day: "numeric",
+});
+
+const base = import.meta.env.BASE_URL;
+const journalHref = `${base}journal/`;
+---
+
+<Layout title={`${meta.title} — akrm al-hakimi`} description={meta.description}>
+  <article class="journal-article">
+    <p class="back"><a href={journalHref}>← journal</a></p>
+    <header>
+      <h1>{meta.title}</h1>
+      <time class="pub-date" datetime={meta.date}>{formattedDate}</time>
+    </header>
+    <Content />
+  </article>
+</Layout>
+
+<style>
+  .back {
+    margin-bottom: 1.25rem;
+  }
+
+  .pub-date {
+    display: block;
+    color: #888;
+    font-size: 0.9rem;
+    margin-bottom: 1.25rem;
+  }
+
+  .journal-article :global(h1) {
+    margin-bottom: 0.35rem;
+  }
+</style>

@@ -10,7 +10,8 @@ const base = import.meta.env.BASE_URL;
 
 const navItems = [
   { href: `${base}`, label: "home" },
-  { href: `${base}work/`, label: "work" }
+  { href: `${base}journal/`, label: "journal" },
+  { href: `${base}work/`, label: "work" },
 ];
 
 const currentPath = Astro.url.pathname;
@@ -176,6 +177,17 @@ const currentPath = Astro.url.pathname;
     border: none;
     border-top: 1px solid #333;
     margin: 2rem 0;
+  }
+
+  main :global(.photo) {
+    width: 100%;
+    max-width: 480px;
+    border: 1px solid #333;
+    border-radius: 3px;
+    margin-top: 0.5rem;
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
   }
 
   @media (max-width: 480px) {

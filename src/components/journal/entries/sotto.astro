@@ -1,0 +1,80 @@
+---
+const base = import.meta.env.BASE_URL;
+---
+
+<div class="entry-body">
+  <img src={`${base}aicommits.png`} alt="aicommit" class="photo" />
+  <img src={`${base}aicommits-1.png`} alt="image" class="photo" />
+
+  <p>i should preface by saying i hate ai and very much think we're in a bubble.</p>
+
+  <p>but i also don't feel strong enough about it to deject it entirely.</p>
+
+  <p>
+    imho i spend far too much minutes of my life writing/thinking of commit messages. if ai can do it
+    decent enough for me, especially on my throwaway projects, i'll gladly accept its help.
+  </p>
+
+  <p>
+    i do not like aicommits (or any of the other existing cli tools for ai commits) because it's just
+    too much fucking ceremony. you run commit and it's only then that you send a call to your llm to
+    generate the message and let you pick the one you want. no one wants to fucking sit through that,
+    i might as well have not used it at all.
+  </p>
+
+  <p>
+    the screenshots above are a perfect example of how ridiculous this process is. you sit for about 5
+    seconds on average waiting for the result to come back from running <code>aicommits</code>. in this case, it's 
+    the models fault for giving an incorrect message, but it adds to the waste of time that is running <code>aicommits</code> after staging.
+  </p>
+
+  <p>
+    this next screenshot is even more egregious. i made the same change, and although this time it was
+    right, the command took 14 seconds to run. for a one line change.
+  </p>
+
+  <img src={`${base}yuck.png`} alt="yuck" class="photo" />
+
+  <p>
+    i don't really have interest in hearing "your model is just bad." there is virtually no model that
+    should not be able to generate either a correct or timely commit message for a <em>one line change</em>. These things do not take that long 
+    to receive a response.
+  </p>
+
+  <p>
+    the issue is not the api call, it's when we are actually offloading this work to the llm. it's also how much 
+    of the interface we have decided to change for the user. everyone has their own preferences, but personally, 
+    i do not fucking understand why you would want to flex an entirely different/new muscle to do something like writing commits,
+    which should be a mindless task.
+  </p>
+
+  <p>
+    anyways, over the weekend i wrote up a prototype employs a different approach: i simply
+    poll for file edits/saves in a repo, and make the api call <em>there</em>. i then add a configurable
+    debounce timer to check when/if to make a call again based on how different your diff is from the
+    previously cached entry.
+  </p>
+
+  <p>repo: <a href="https://github.com/cachebag/sotto" target="_blank" rel="noopener noreferrer">cachebag/sotto</a></p>
+
+  <p>
+    i am biased, but i genuinely think even this poorly written, prototype is better than everything else
+    that exists because it takes away the annoying fucking friction of staring at a rainbow colored
+    terminal prompt asking you which commit message to choose. i shouldn't need to run a new command to generate a commit message. it should
+    be within the flow of git itself.
+  </p>
+
+  <p>
+    i am aware that this is a really silly problem, and likely no one will care or use it; but it really bothered me personally to want something like this to work,
+    only to see the best options <em>not</em> work.
+  </p>
+
+  <p>
+    i go a bit more in depth about the technical details in the repo's README. of course, you can also just read the code, it's really not that complicated. 
+  </p>
+
+  <p>
+    this will probably be my new time waster for the next few weeks.
+  </p>
+
+</div>
