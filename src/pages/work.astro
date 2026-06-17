@@ -3,23 +3,29 @@ import Layout from "../layouts/Layout.astro";
 
 const projects = [
   {
-    name: "zerobrew",
-    url: "https://github.com/lucasgelfond/zerobrew",
-    description: "optimized client and alternative for homebrew",
-    image: "https://opengraph.githubassets.com/1/lucasgelfond/zerobrew"
-  },
-  {
     name: "nmrs",
-    url: "https://github.com/cachebag/nmrs",
-    description: "rust bindings for NetworkManager + Wayland-compatible GUI",
-    image: "https://opengraph.githubassets.com/1/cachebag/nmrs"
+    url: "https://github.com/networkmanager-rs/nmrs",
+    description: "Rust bindings for NetworkManager over D-Bus",
+    image: "https://opengraph.githubassets.com/1/networkmanager-rs/nmrs"
   },
   {
     name: "payme",
     url: "https://github.com/cachebag/payme",
-    description: "personal finance tracker built for my homelab",
+    description: "Personal finance tracker built for my homelab",
     image: "https://opengraph.githubassets.com/1/cachebag/payme"
-  }
+  },
+  {
+    name: "jumpy",
+    url: "https://github.com/cachebag/jumpy",
+    description: "Min-maxing AI assisted programming in neovim",
+    image: "https://opengraph.githubassets.com/1/cachebag/jumpy"
+  },
+  {
+    name: "zerobrew",
+    url: "https://github.com/lucasgelfond/zerobrew",
+    description: "Optimized client and alternative for homebrew",
+    image: "https://opengraph.githubassets.com/1/lucasgelfond/zerobrew"
+  },
 ];
 
 const contributions = [
@@ -28,6 +34,12 @@ const contributions = [
     url: "https://github.com/rust-lang/rustup",
     description: "The Rust toolchain installer",
     image: "https://opengraph.githubassets.com/1/rust-lang/rustup"
+  },
+  {
+  name: "pop-os/cosmic-applets",
+    url: "https://github.com/pop-os/cosmic-applets",
+    description: "Applets for cosmic-panel in pop!_os",
+    image: "https://opengraph.githubassets.com/1/pop-os/cosmic-applets",
   },
   {
     name: "zbus",
@@ -42,36 +54,15 @@ const contributions = [
   <h1>software</h1>
 
   <p>
-    i've been fortunate enough to work on a nice selection of software, mainly built in rust, that i both own and contribute to/maintain.
-    while my professional work currently is primarily in go, OSS in rust is my passion. i believe the future of software built with rust is exceptionally promising.
+    much of the free-time i do have is spent working on software in rust, that of which i both own and contribute to/maintain.
+    at work, i also develop rust, but we mainly use go for everything. generally speaking, i enjoy programming in any language that 
+    isn't javascript.
   </p>
 
   <p>
-    i joined the <a href="https://github.com/lucasgelfond/zerobrew" target="_blank">zerobrew</a> project in january 2026
-    and helped ramp up the project to where it is today. though i've stepped away as the core maintainer for various reasons, 
-    some of the notable things i began working on / worked there are: 
-
+    i love talking about the work i'm doing (or really anything else revolving around OSS or programming) so if you'd like to chat, please reach out! i've left a list of my socials below.
     <ul>
-        <li>talking nicely with homebrew code. we were tightly coupled to their core functionality. none of the stuff we did there would be possible without the use of their ruby DSL.</lI>
-        <li>cask support. i left right at the tail end of supporting desktop apps (cursor, ghostty) but that was probably the funnest stuff i did there. a new domain for me. </li>
-        <li>binary patching (both linux and macOS). we encountered many bugs, and many probably still exist, with patching binaries on the installations of various programs (plantuml, git (remote operations in particular were quirky)). also a new domain for me, but very rewarding stuff to work on. </li>
-    </ul>
-  </p>
-
-  <p>
-    ...and a lot more stuff i was privileged with being a part of.
-  </p>
-
-  <p>
-    beyond the new and exciting work i had done with zerobrew, i've also had a lot of fun contributing to <a href="https://github.com/rust-lang/rustup" target="_blank">rustup</a>, as well as working on some of my own projects and the dependencies i rely on for them.
-    <a href="https://github.com/cachebag/nmrs" target="_blank">nmrs</a> is a project i've been working on for a while now; it is a set of rust bindings for NetworkManager over D-Bus.
-    by extension, i've also contributed a fairly great deal to zbus <a href="https://github.com/z-galaxy/zbus" target="_blank">zbus</a>, which is essentially the underlying library for nmrs.
-  </p>
-
-  <p>
-    i love talking about the work i'm doing (or really anything else revolving around OSS) so if you'd like to chat, please reach out! i've left a list of my socials below.
-    <ul>
-      <li>email: <a href="mailto:alhakimiakrmj@gmail.com">alhakimiakrmj@gmail.com</a></li>
+      <li>email: <a href="mailto:akrm@cachebag.sh">akrm@cachebag.sh</a></li>
       <li>matrix: <a href="https://app.element.io/#/room/#zbus:matrix.org">@cachebag:matrix.org</a></li>
       <li>x(twitter): <a href="https://x.com/cachebagged">cachebagged</a></li>
       <li>linkedin: <a href="https://www.linkedin.com/in/akrmalhakimi/">akrm al-hakimi</a></li>
@@ -79,7 +70,7 @@ const contributions = [
   </p>
 
   <p>
-    i've also left a list of my projects below.
+    i've also left a list of some of my projects below.
   </p>
 
   <h2>projects</h2>
