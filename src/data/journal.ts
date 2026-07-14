@@ -9,6 +9,12 @@ export interface JournalEntryMeta {
 /** Newest first */
 export const journalEntries: JournalEntryMeta[] = [
   {
+    slug: "interactive-rebasing",
+    date: "2026-07-14",
+    title: "git rebase -i is not that scary",
+    description: "a guide to interactive rebasing.",
+  },
+  {
     slug: "sotto",
     date: "2026-05-04",
     title: "sotto",
