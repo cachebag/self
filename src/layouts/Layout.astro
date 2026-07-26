@@ -23,6 +23,12 @@ const currentPath = Astro.url.pathname;
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>{title}</title>
     <meta name="description" content={description} />
+    <link
+      rel="alternate"
+      type="application/rss+xml"
+      title="akrm al-hakimi — journal"
+      href={new URL("rss.xml", Astro.site)}
+    />
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
@@ -35,9 +41,21 @@ const currentPath = Astro.url.pathname;
             <a
               href={item.href}
               class:list={{ active: currentPath === item.href || (item.href !== base && currentPath.startsWith(item.href)) }}
-            >{item.label}</a>{i < navItems.length - 1 && <span class="sep">&bull;</span>}
+            >{item.label}</a><span class="sep">&bull;</span>
           </>
         ))}
+        <a class="rss" href={`${base}rss.xml`} title="RSS feed" aria-label="RSS feed">
+          <svg viewBox="0 0 24 24" width="12" height="12" aria-hidden="true" focusable="false">
+            <circle cx="5.5" cy="18.5" r="2.5" fill="currentColor"></circle>
+            <path
+              d="M3 10.5a10.5 10.5 0 0 1 10.5 10.5M3 4a17 17 0 0 1 17 17"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2.6"
+              stroke-linecap="round"
+            ></path>
+          </svg>
+        </a>
       </nav>
 
       <main>
@@ -92,6 +110,20 @@ const currentPath = Astro.url.pathname;
   .sep {
     margin: 0 0.5rem;
     color: #928374;
+  }
+
+  nav a.rss {
+    color: #928374;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    vertical-align: baseline;
+    position: relative;
+    top: 1px;
+  }
+
+  nav a.rss:hover {
+    color: #b8bb26;
   }
 
   main :global(a) {
