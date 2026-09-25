@@ -1,0 +1,132 @@
+---
+title: "tiles for time series"
+date: 2026-09-24
+description: "a four day trip would not plot. it does now, in about 30ms. what i learned getting there."
+---
+
+at work i've spent the last few days on a bug that read like a one liner: plotting a trip longer than a day or so fails with `Failed to load signal data: ` and nothing after the colon.
+
+some context for the shape of the data. vehicles stream telemetry into s3 as chunks of about ten minutes each. a four day trip is around 500 chunks. one engine speed signal sampled every 5 ms is about 69 million points over those four days. the plot that fails is about 2000 pixels wide.
+
+that last pair of numbers is the whole post, honestly. but it took me a while to get there, because the bug was not one bug.
+
+## five things that each looked like the bug
+
+1. **the blank error.** the plotting client asked the server for raw samples first, and fell back to decimated data only if the error text contained a specific phrase. the server never answered; cloudfront answered for it with a 504 at 30 seconds, which the grpc-web transport maps to `DeadlineExceeded` with an empty message. no phrase, no fallback, blank error. an empty message is not "no information". it told me which layer gave up, and that the server was never asked the cheaper question.
+
+2. **a limit that did all the work first.** the server caps raw reads at 100k points. it enforced the cap after decoding the whole window. so for a window with 281k points it spent 24 to 37 seconds decoding everything, then said no. a limit you check after doing the work is not a limit.
+
+3. **a cache that could not write.** the server keeps per-chunk summaries in s3 so the second plot is cheap. in production the server's role was never granted write access to that prefix, so every plot was the first plot. it also lacked `s3:ListBucket`, which means a missing object comes back as 403 instead of 404, so a normal cache miss logged like a permissions failure. this was the fix everyone (me included) wanted to ship and go home. it is necessary. it fixes nothing on its own.
+
+4. **a cache with the wrong shape.** each summary held every signal of a plugin at 0.3125 s resolution. for a plugin with 265 signals, one ten minute chunk's summary is 2.5 MB compressed and 27 MB decoded, about 88% of the raw chunk. plotting one signal across the whole trip read 92 MB of "cache" to produce 2000 points, and the read path decoded all of it up front, so the process grew by 2.4 GB and got OOM-killed at its 4 GB limit. a cache that is the size of the data is a copy.
+
+5. **the box.** the one customer hitting this was on the smallest instance we run, and the service had no memory ceiling, so when it died it took the rest of the host with it.
+
+each of these had a proposed fix attached: bump the cloudfront timeout, add the IAM grant, get a bigger box. bumping the timeout from 30 to 60 seconds buys you nothing when the read itself takes 37 seconds and then dies. every fix on that list makes the work cheaper by a constant. none of them changes what the work is proportional to.
+
+## work should scale with the screen, not the trip
+
+a plot has around 2000 pixels of width. it does not matter if the window is six hours or six weeks; the client needs about that many points, and each point is the min, max, first, last and mean of whatever fell into that pixel's slice of time. the summaries already computed those records, just at one fixed resolution, one object per chunk, for every signal at once. so a wide view had to touch every chunk, and the cost was proportional to the trip.
+
+maps solved this decades ago. you do not download the whole planet to look at your street; you download the tiles at the zoom level you are looking at, and there are only ever a handful on screen. the same idea works for time.
+
+so the layout became: a tile is 2048 consecutive buckets, at one stored level, for one group of signals. levels are 5 s × 2ⁿ, and we store five of them.
+
+```rust
+pub const BUCKETS_PER_TILE: u32 = 2048;
+pub const SIGNAL_GROUPS: u32 = 16;
+pub const STORED_LEVELS: [u8; 5] = [0, 3, 6, 9, 12];
+```
+
+```
+level  bucket width    one tile spans   what it serves
+L12    5.7 h           ~485 days        nothing needs this yet
+L9     42.7 min        ~61 days         a month
+L6     320 s           ~7.6 days        the whole four day trip (one tile)
+L3     40 s            ~22.8 h          a day (two tiles)
+L0     5 s             ~2.8 h           six hours (three tiles)
+raw    5 ms samples    10 min chunks    zoomed all the way in
+```
+
+the gap between stored levels is 8×. because every width is 5 s times a power of two, the grids nest exactly: a bucket at one level is the union of whole buckets at the level below it. a view that wants 160 s buckets reads the 40 s tiles and folds four records into one, and the result is what you would have gotten from the raw samples. exactly, for min, max, first and last. float sums are not associative, so the mean can wobble in its last bits, which i did not know going in. skipping levels was a cost trade: we fold at most 4× on read, and write five objects per group per chunk instead of thirteen.
+
+signals are split into 16 groups by hashing the signal id, so one tile carries a sixteenth of a plugin's signals instead of all of them. that is the knob if tile bytes get too big. right now a whole trip tile is about 149 KB.
+
+a tile's position is three numbers, and its s3 key is those three numbers under the trip:
+
+```rust
+pub struct TileCoord {
+    pub level: u8,
+    pub group: u32,
+    pub index: u64,
+}
+```
+
+## the two ideas that made it work
+
+**the merge has to be order independent.** tiles get built by whichever chunk shows up, in whatever order, possibly by two builders at once, and get rebuilt when a chunk is reprocessed. that only works if folding two bucket records into one is commutative and associative, so the answer never depends on who arrived first. `count` and `sum` are trivially fine. `min` and `max` are fine until two samples tie, at which point the tie has to be decided by timestamp and not by arrival. `first` and `last` need a total order on samples, so samples that share a timestamp are ordered by value. it is a small function, and every branch in it exists because a test caught an order dependency:
+
+```rust
+/// Whether `candidate` should replace `current` as an extremum. A value
+/// beats no value, a better value wins, and an equal value wins only when
+/// it is earlier, so the outcome does not depend on arrival order.
+fn extremum_replaces(
+    current: Option<&DataPoint>,
+    candidate: &DataPoint,
+    better: impl Fn(f64, f64) -> bool,
+) -> bool {
+    let Some(current) = current else {
+        return true;
+    };
+    match (current.v, candidate.v) {
+        (None, Some(_)) => true,
+        (Some(_), None) | (None, None) => false,
+        (Some(cur), Some(cand)) => better(cand, cur) || (cand == cur && candidate.t < current.t),
+    }
+}
+```
+
+once the record merges like that, the concurrency problem becomes boring. s3 has supported conditional puts since 2024: `If-None-Match: *` to create only if absent, `If-Match: <etag>` to replace only the version you read. a tile update is read, merge, put-if-unchanged, retry on a 412. two builders racing on one tile both win, in either order.
+
+**each tile records which chunks are in it.** every tile carries the set of chunks that have been folded into it. that one field does three jobs. rebuilding a chunk is a no-op (i reran the builder over 500 chunks; it wrote 0 tiles and skipped 45,908). there is no flag day, because the reader decides per tile whether it can trust the tile for a chunk or has to fall back to the old path for exactly that span. and a half-written chunk (some of its tiles landed, one failed) hands back only the span of the tile that failed, so nothing gets dropped or counted twice.
+
+```rust
+/// What the chunk path still owes one series for one chunk.
+pub enum ChunkNeed {
+    /// Tiles hold all of it.
+    Nothing,
+    /// No tiles apply; serve all of it.
+    Everything,
+    /// Serve only samples and records in these half-open spans.
+    Spans(Vec<(f64, f64)>),
+}
+```
+
+the no flag day part is the reason this was shippable at all. old trips have no tiles. new trips get tiles as chunks land. trips in the middle have some. the read path is the same for all three and every one of them is correct; the only thing that changes is how many bytes it costs.
+
+## numbers
+
+same trip, same machine, same server, warm cache, before and after:
+
+```
+view          before                after
+6 hours       666 ms                34 ms
+1 day         1,336 ms              34 ms
+whole trip    4,104 ms / 92 MB      30-38 ms / 149 KB
+memory        +2.4 GB, OOM killed   99 MB peak
+raw cap hit   24-37 s               4.1 s
+```
+
+(the memory row is from bounding the old read path so it streams one chunk's summary at a time. it landed before tiles and matters even if you never build a tile.)
+
+## what i would tell myself a week ago
+
+**diff the new path against the old one on real data before you believe it.** i compared the tiled output against the summary output for the same trip. they matched except for two things: the new path could emit one point from up to one stored bucket past the window edge (fixed by clipping), and the old path emitted two points out of time order where two chunks overlap. i was looking for a bug in the new code and found one in the old code.
+
+**set memory ceilings from a cold start.** i put a 4 GB ceiling on a process that was already above 4 GB. systemd killed it before i finished reading the command output. check where it is before you tell it where it may not go.
+
+**the fix everyone wants is usually necessary and rarely sufficient.** the IAM grant and the bigger box shipped too, and they needed to. but the client that asks the cheap question first, the cap that stops early, and the tiles are what made a four day trip open.
+
+the tradeoff is write amplification: 16 groups × 5 levels is 80 small puts per plugin per chunk, which comes to about two dollars a month per always-on vehicle. i'll take it.
+
+anyways, this was the most fun i've had at work since i started.
